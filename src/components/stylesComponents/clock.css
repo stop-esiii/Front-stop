@@ -1,0 +1,9 @@
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-logo {
+    width: 500px; /* Ajuste o tamanho da logo conforme necessário */
+}
