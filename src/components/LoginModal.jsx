@@ -7,12 +7,11 @@ import useLocalStorage from "../hooks/useLocalStorage";
 
 const LoginModal = ({ closeLogin, showSignup }) => {
     const navigate = useNavigate();
-    const [token, setToken] = useLocalStorage('token', ''); // Use um valor padrão vazio para o token
+    const [token, setToken] = useLocalStorage('access_token', '');
     const [userLogin, setUserLogin] = useState({
-        id: 0,
-        usuario: '',
-        senha: '',
-        token: ''
+        login: '',
+        password: ''
+
     });
 
     function updatedModel(e) {
@@ -52,13 +51,25 @@ const LoginModal = ({ closeLogin, showSignup }) => {
                 <form>
                     <label>
                         E-MAIL:
-                        <input type="email" placeholder="Insira seu e-mail aqui." />
+                        <input
+                            name="login"
+                            value={userLogin.login}
+                            onChange={(e) => updatedModel(e)}
+                            type="text"
+                            placeholder="Insira seu e-mail aqui."
+                        />
                     </label>
                     <label>
                         SENHA:
-                        <input type="password" placeholder="Insira sua senha aqui." />
+                        <input
+                            name="password"
+                            value={userLogin.password}
+                            onChange={(e) => updatedModel(e)}
+                            type="password"
+                            placeholder="Insira sua senha aqui."
+                        />
                     </label>
-                    <button className="login-button">ENTRAR</button>
+                    <button className="login-button" onClick={onSubmit}>ENTRAR</button>
                 </form>
                 <div className="footer-links">
                     <a href="#forgot-password">Esqueceu sua senha? Clique aqui.</a>
