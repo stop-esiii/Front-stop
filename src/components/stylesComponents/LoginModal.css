@@ -10,17 +10,6 @@
     align-items: center;
 }
 
-.modal-content {
-    background-color: #FF684D;
-    padding: 30px;
-    width: 400px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    color: white;
-    position: relative;
-}
-
 .close-button {
     background-color: transparent;
     border: none;
@@ -70,12 +59,13 @@ form {
 label {
     display: block;
     margin: 10px 0 5px 0;
-    color: #FFC44D;
+    color: #ffc249;
     text-align: left;
+    font-weight: bold;
 }
 
 input {
-    width: 100%;
+    margin-left: 20px;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #FFC44D;
@@ -97,6 +87,41 @@ input {
 
 .login-button:hover {
     background-color: #dc6c6c;
+}
+
+
+.main-button {
+    background-color: #EE4D4D;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    width: 40%;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+    margin: 10px;
+    font-weight: 900;
+}
+
+.main-button:hover {
+    background-color: #d8c364a2;
+}
+
+.config-button {
+    background-color: #EE4D4D;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 100px;
+    transition: background-color 0.3s ease;
+    font-weight: 900;
+}
+
+.config-button:hover {
+    background-color: #d8c364a2;
 }
 
 .footer-links {
@@ -126,16 +151,43 @@ input {
     align-items: center;
 }
 
-.modal-content {
-    background-color: #FF684D;
-    padding: 60px;
-    width: 450px; /* Aumenta a largura do modal para corrigir a diferença */
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    color: white;
-    position: relative;
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .modal-content {
+        background-color: #FF684D;
+        margin: 50px;
+        width: 60%; /* Aumenta a largura do modal para corrigir a diferença */
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        color: white;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
 }
+
+/* Media query for mobile devices (screen width less than 768px) */
+@media only screen and (max-width: 767px) {
+    .modal-content {
+        background-color: #FF684D;
+        margin: 50px;
+        width: 80%; /* Aumenta a largura do modal para corrigir a diferença */
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        color: white;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+}
+
 
 .close-button {
     background-color: transparent;
@@ -143,9 +195,9 @@ input {
     color: white;
     font-size: 24px;
     cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    position: re;
+    top: 0;
+    right: 0;
 }
 
 h2 {
@@ -156,7 +208,7 @@ h2 {
 
 .google-login-button {
     background-color: white;
-    margin-left: 5rem;
+    align-items: center;
     color: black;
     font-size: 16px;
     padding: 10px 20px;
