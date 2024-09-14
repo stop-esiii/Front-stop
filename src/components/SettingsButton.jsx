@@ -1,9 +1,9 @@
 import React from 'react';
-
-const SettingsButton = () => {
+import confImage from '../images/conf.svg';
+const SettingsButton = ({ onClick }) => {
     return (
-        <button className="settings-button">
-            <img src="/path/to/gear-icon.png" alt="Configurações" />
+        <button className="settings-button" onClick={onClick}>
+            <img src={confImage} alt="Configurações" />
         </button>
     );
 };
