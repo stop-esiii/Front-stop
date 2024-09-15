@@ -4,9 +4,9 @@ import './Home.css';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/Logo.png';
 import settingsIcon from '../../assets/conf.svg';
-import Button from '@mui/material/Button'; 
-import IconButton from '@mui/material/IconButton'; 
-import SettingsIcon from '@mui/icons-material/Settings'; 
+import Button from '@mui/material/Button'; // Importa o botão do Material-UI
+import IconButton from '@mui/material/IconButton'; // Importa o botão de ícone do Material-UI
+import SettingsIcon from '@mui/icons-material/Settings'; // Importa o ícone de configurações
 
 function Home() {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ function Home() {
           variant="contained" 
           color="primary" 
           onClick={() => navigate('/login')} 
-          sx={{ marginBottom: '20px' }} 
+          sx={{ marginBottom: '20px' }} // Customiza o estilo do botão
         >
           Login
         </Button>
@@ -29,7 +29,7 @@ function Home() {
           Ajuda
         </Button>
         <IconButton color="primary" aria-label="settings">
-          <SettingsIcon style={{ fontSize: 50 }} /> 
+          <SettingsIcon style={{ fontSize: 50 }} /> {/* Ajusta o tamanho do ícone */}
         </IconButton>
       </div>
     </div>
