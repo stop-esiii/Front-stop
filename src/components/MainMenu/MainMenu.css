@@ -1,0 +1,83 @@
+.main-menu-container {
+    background-color: #FF684D;
+    padding: 20px;
+    width: 300px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    margin: auto;
+}
+
+.main-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-name {
+    color: #FFC44D;
+}
+
+.menu-icons {
+    display: flex;
+    gap: 10px;
+}
+
+.icon-button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.account-info {
+    margin: 20px 0;
+    font-size: 14px;
+}
+
+.premium-info {
+    color: #FFC44D;
+    cursor: pointer;
+}
+
+.main-menu-actions {
+    margin: 20px 0;
+}
+
+.create-game-button,
+.join-game-button {
+    background-color: #EE4D4D;
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    margin: 10px 0;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+.game-info {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.game-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.indicator {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+}
+
+.full {
+    background-color: #FFC44D;
+}

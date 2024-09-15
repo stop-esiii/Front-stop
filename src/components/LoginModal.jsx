@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './stylesComponents/LoginModal.css';
 
-const LoginModal = ({ closeLogin, showSignup, showForgotPassword }) => {
+const LoginModal = ({ closeLogin, showSignup, showForgotPassword, handleLogin }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        handleLogin(email, password);
+    };
+
     return (
         <div className="modal-overlay" onClick={(e) => e.target.className === 'modal-overlay' && closeLogin()}>
             <div className="modal-content">
@@ -12,16 +20,28 @@ const LoginModal = ({ closeLogin, showSignup, showForgotPassword }) => {
                     FAZER LOGIN COM GOOGLE
                 </button>
                 <div className="separator">OU</div>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <label>
                         E-MAIL:
-                        <input type="email" placeholder="Insira seu e-mail aqui." />
+                        <input
+                            type="email"
+                            placeholder="Insira seu e-mail aqui."
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
                     </label>
                     <label>
                         SENHA:
-                        <input type="password" placeholder="Insira sua senha aqui." />
+                        <input
+                            type="password"
+                            placeholder="Insira sua senha aqui."
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
                     </label>
-                    <button className="login-button">ENTRAR</button>
+                    <button className="login-button" type="submit">ENTRAR</button>
                 </form>
                 <div className="footer-links">
                     <a onClick={showForgotPassword} style={{ cursor: 'pointer', textDecoration: 'underline' }}>Esqueceu sua senha? Clique aqui.</a>

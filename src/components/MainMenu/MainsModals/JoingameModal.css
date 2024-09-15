@@ -13,7 +13,7 @@
 .modal-content {
     background-color: #FF684D;
     padding: 20px;
-    width: 320px; 
+    width: 300px;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
     text-align: center;
@@ -33,7 +33,7 @@
 }
 
 h2 {
-    font-size: 22px;
+    font-size: 20px;
     color: #FFC44D;
     margin-bottom: 15px;
 }
@@ -49,15 +49,6 @@ form {
     align-items: center;
 }
 
-label {
-    display: block;
-    text-align: left;
-    width: 100%;
-    margin-bottom: 10px;
-    color: #FFC44D;
-    font-size: 14px;
-}
-
 input {
     width: 100%;
     padding: 10px;
@@ -67,7 +58,7 @@ input {
     font-size: 14px;
 }
 
-.send-link-button {
+.join-game-button {
     background-color: #FFC44D;
     color: white;
     border: none;
@@ -79,6 +70,6 @@ input {
     transition: background-color 0.3s ease;
 }
 
-.send-link-button:hover {
+.join-game-button:hover {
     background-color: #FFB347;
 }
