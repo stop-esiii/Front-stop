@@ -1,0 +1,36 @@
+.Home-div{
+  background-color:rgb(255, 196, 77) ;
+  height: 100vh;
+}
+
+.mobile-app-container{
+  background: linear-gradient(270deg, #f8897a, #eeff8f,#fccd6f);
+  background-size: 400% 400%; /* Aumenta o tamanho do fundo para criar um efeito de animação */
+  animation: gradientAnimation 10s ease infinite; /* Animação com duração de 15 segundos que se repete infinitamente */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: 'Arial', sans-serif;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+.mobile-button-div{
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

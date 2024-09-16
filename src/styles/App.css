@@ -1,7 +1,5 @@
 .app-container {
-  background: linear-gradient(270deg, #f8897a, #eeff8f,#fccd6f);
-  background-size: 400% 400%; /* Aumenta o tamanho do fundo para criar um efeito de animação */
-  animation: gradientAnimation 10s ease infinite; /* Animação com duração de 15 segundos que se repete infinitamente */
+  background-color: #FFC44D; /* Cor de fundo amarelo */
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -9,26 +7,9 @@
   flex-direction: column;
   font-family: 'Arial', sans-serif;
 }
-@keyframes gradientAnimation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
 
 .main-screen {
   text-align: center;
-}
-
-.main-screen_web {
-  text-align: center;
-  display: flex;
-  flex-direction: row;
 }
 
 .logo-container img {
@@ -46,17 +27,6 @@
   cursor: pointer;
   border-radius: 10px;
   text-transform: uppercase;
-}
-
-
-.button_div{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  justify-items: center;
-  justify-self: center;
-  width: 100%;
 }
 
 .settings-button img {
@@ -126,5 +96,3 @@ p {
 .login-link:hover {
   background-color: #D94B4B; /* Um leve efeito de hover para feedback visual */
 }
-
-@import 'reset.css';
