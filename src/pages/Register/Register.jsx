@@ -1,25 +1,11 @@
-// src/pages/Login/Login.js
-import React, { useState } from 'react';
-import { TextField, Button, Box, Divider } from '@mui/material';
+// src/pages/Register/Register.js
+import React from 'react';
+import { TextField, Button, Box, IconButton, Divider } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
-import './Login.css';
 
-function Login() {
+function Register() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('');
-
-  const handleLogin = async() => {
-    try {
-      const credentials = {email, password}
-      const data = await Login(credentials);
-      console.log('Login bem sucessedido', data);
-      
-    } catch (error) {
-      setError("Erro ao fazer login, verifique suas credenciais.")
-    }
-  }
 
   return (
     <Box
@@ -42,10 +28,20 @@ function Login() {
           clipPath: 'polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%)',
         }}
       >
+        {/* Ícone de voltar */}
+        <IconButton
+          onClick={() => navigate('/')}
+          sx={{ position: 'absolute', left: 8, top: 8, color: '#f74440' }}
+        >
+          <ArrowBackIcon />
+        </IconButton>
+
+        {/* Título */}
         <Box sx={{ textAlign: 'center', color: '#f74440', fontWeight: 'bold', fontSize: '24px', marginBottom: 2 }}>
-          LOGIN
+          CADASTRO
         </Box>
 
+        {/* Botão Google */}
         <Button
           variant="contained"
           fullWidth
@@ -56,13 +52,22 @@ function Login() {
             fontWeight: 'bold',
           }}
         >
-          FAZER LOGIN COM GOOGLE
+          CONTINUAR COM GOOGLE
         </Button>
 
+        {/* Linha divisória */}
         <Divider sx={{ marginBottom: 2 }}>
           <Box sx={{ fontWeight: 'bold', color: '#f74440' }}>OU</Box>
         </Divider>
 
+        {/* Formulário de cadastro */}
+        <TextField
+          label="Nome"
+          placeholder="Insira seu nome aqui."
+          fullWidth
+          margin="dense"
+          sx={{ marginBottom: 2 }}
+        />
         <TextField
           label="E-mail"
           placeholder="Insira seu e-mail aqui."
@@ -78,7 +83,16 @@ function Login() {
           margin="dense"
           sx={{ marginBottom: 2 }}
         />
+        <TextField
+          label="Confirmar Senha"
+          type="password"
+          placeholder="Insira sua senha novamente."
+          fullWidth
+          margin="dense"
+          sx={{ marginBottom: 2 }}
+        />
 
+        {/* Botão Cadastrar */}
         <Button
           variant="contained"
           fullWidth
@@ -90,24 +104,11 @@ function Login() {
             marginTop: 2,
           }}
         >
-          ENTRAR
+          CADASTRAR
         </Button>
-
-        <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-          <p>
-            Não possui login?{' '}
-            <Button
-              variant="text"
-              sx={{ color: '#f74440', fontWeight: 'bold' }}
-              onClick={() => navigate('/register')}
-            >
-              Cadastre-se
-            </Button>
-          </p>
-        </Box>
       </Box>
     </Box>
   );
 }
 
-export default Login;
+export default Register;
