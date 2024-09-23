@@ -3,17 +3,18 @@ import React, { useState } from 'react';
 import { TextField, Button, Box, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import {login_auth} from '../../services/Service'
 
 function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [login, setEmail] = useState('');
   const [password, setPassword] = useState('')
   const [error, setError] = useState('');
 
   const handleLogin = async() => {
     try {
-      const credentials = {email, password}
-      const data = await Login(credentials);
+      const credentials = {login, password}
+      const data = await login_auth(credentials);
       console.log('Login bem sucessedido', data);
       
     } catch (error) {
@@ -64,15 +65,19 @@ function Login() {
         </Divider>
 
         <TextField
-          label="E-mail"
+          label="login"
           placeholder="Insira seu e-mail aqui."
+          value= {login}
+          onChange={(e) => setEmail(e.target.value)}
           fullWidth
           margin="dense"
           sx={{ marginBottom: 2 }}
         />
         <TextField
-          label="Senha"
+          label="password"
           type="password"
+          value= {password}
+          onChange={(e) => setPassword(e.target.value)}
           placeholder="Insira sua senha aqui."
           fullWidth
           margin="dense"
@@ -82,6 +87,7 @@ function Login() {
         <Button
           variant="contained"
           fullWidth
+          onClick={handleLogin}
           sx={{
             backgroundColor: '#f74440',
             color: '#fff',
