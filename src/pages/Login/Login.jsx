@@ -7,9 +7,10 @@ import {
   DialogContentText,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { loginRequest } from '../../services/Service.js';
+import { loginRequest } from '../../services/Requests.js';
 import './Login.css';
 import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric.jsx';
+import ErrorModal from '../../shared/components/ErrorModal/ErrorModal.jsx';
 
 function Login() {
   const navigate = useNavigate();
@@ -23,20 +24,26 @@ function Login() {
   const [confirmPassword, setConfirmPassword] = useState(''); // Estado para confirmar a nova senha
   const [forgotPasswordError, setForgotPasswordError] = useState(''); // Estado para erros no esqueci a senha
   const [passwordError, setPasswordError] = useState(''); // Estado para erros de senha
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   const handleLogin = async () => {
     try {
       const credentials = { login: email, password };
+      const response = await loginRequest(credentials);
 
-      console.log(
+      if (!response.success) {
+        navigate('/profile');
+      }
 
-      );
-      if (email !== null && email.trim() !== '' && password !== null && password.trim() !== '') {
-        loginRequest(credentials);
-        navigate('/profile'); // Redirecionar para o perfil após login bem-sucedido
+      if (email.trim() !== '' && password.trim() !== '') {
+        setErrorMessage('Preencha todos os campos corretamente.');
+        setModalOpen(true);
       }
     } catch (error) {
-      setError('Erro ao fazer login. Verifique suas credenciais.');
+      setErrorMessage('Erro ao fazer login. Verifique suas credenciais.');
+      setModalOpen(true);
     }
   };
 
@@ -88,7 +95,7 @@ function Login() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: '#f74440',
+        backgroundColor: 'var(--primary-color)',
       }}
     >
       <Box
@@ -102,7 +109,7 @@ function Login() {
           clipPath: 'polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%)',
         }}
       >
-        <Box sx={{ textAlign: 'center', color: '#f74440', fontWeight: 'bold', fontSize: '24px', marginBottom: 2 }}>
+        <Box sx={{ textAlign: 'center', color: 'var(--primary-color)', fontWeight: 'bold', fontSize: '24px', marginBottom: 2 }}>
           LOGIN
         </Box>
 
@@ -111,7 +118,7 @@ function Login() {
           fullWidth
           sx={{
             backgroundColor: '#fff',
-            color: '#f74440',
+            color: 'var(--primary-color)',
             marginBottom: 2,
             fontWeight: 'bold',
           }}
@@ -120,7 +127,7 @@ function Login() {
         </Button>
 
         <Divider sx={{ marginBottom: 2 }}>
-          <Box sx={{ fontWeight: 'bold', color: '#f74440' }}>OU</Box>
+          <Box sx={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>OU</Box>
         </Divider>
 
         <TextField
@@ -150,7 +157,7 @@ function Login() {
           fullWidth
           onClick={handleLogin}
           sx={{
-            backgroundColor: '#f74440',
+            backgroundColor: 'var(--primary-color)',
             color: '#fff',
             fontWeight: 'bold',
             fontSize: '16px',
@@ -165,7 +172,7 @@ function Login() {
           fullWidth
           onClick={handleForgotPassword}
           sx={{
-            color: '#f74440',
+            color: 'var(--primary-color)',
             fontWeight: 'bold',
             fontSize: '14px',
             marginTop: 2,
@@ -179,7 +186,7 @@ function Login() {
             Não possui login?{' '}
             <Button
               variant="text"
-              sx={{ color: '#f74440', fontWeight: 'bold' }}
+              sx={{ color: 'var(--primary-color)', fontWeight: 'bold' }}
               onClick={() => navigate('/register')}
             >
               Cadastre-se
@@ -197,7 +204,7 @@ function Login() {
             <Button
               onClick={handlePasswordChange}
               sx={{
-                backgroundColor: '#f74440',
+                backgroundColor: 'var(--primary-color)',
                 color: '#fff',
                 fontWeight: 'bold',
                 width: '100%',
@@ -209,7 +216,7 @@ function Login() {
             <Button
               onClick={handleSendRecoveryEmail}
               sx={{
-                backgroundColor: '#f74440',
+                backgroundColor: 'var(--primary-color)',
                 color: '#fff',
                 fontWeight: 'bold',
                 width: '100%',
@@ -246,7 +253,7 @@ function Login() {
           </>
         ) : (
           <>
-            <DialogContentText sx={{ color: '#f74440' }}>
+            <DialogContentText sx={{ color: 'var(--primary-color)' }}>
               Insira seu e-mail para enviarmos um link de recuperação de sua senha.
             </DialogContentText>
             <TextField
@@ -263,6 +270,12 @@ function Login() {
           </>
         )}
       </ModalGenenric>
+
+      <ErrorModal
+        open={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        errorMessage={errorMessage}
+      />
     </Box>
   );
 }
