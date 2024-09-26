@@ -1,12 +1,12 @@
 // src/service.js
 import axios from 'axios';
 
-const API_URL = 'https://stop-backend.up.railway.app/'; 
+const API_URL = 'https://stop-backend.up.railway.app/api'; 
 
 // Função para fazer login
 export const login = async (credentials) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, credentials);
+    const response = axios.post(`${API_URL}/login`, credentials);
     return response.data;
   } catch (error) {
     console.error('Erro ao fazer login:', error);

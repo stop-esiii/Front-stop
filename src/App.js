@@ -4,7 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Home from './pages/home/Home';
 import Login from './pages/Login/Login';
-import Register from './pages/Register/Register'; // Importa a nova página de cadastro
+import Register from './pages/Register/Register'; 
+import Profile from './pages/Profile/Profile'; // Importando o Profile
 
 const theme = createTheme({
   palette: {
@@ -25,7 +26,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} /> {/* Adiciona a rota de cadastro */}
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} /> 
           </Routes>
         </div>
       </Router>
