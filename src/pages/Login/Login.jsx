@@ -4,16 +4,12 @@ import {
   Button,
   Box,
   Divider,
-  Dialog,
-  DialogActions,
-  DialogContent,
   DialogContentText,
-  DialogTitle,
-  IconButton,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import CloseIcon from '@mui/icons-material/Close'; // Ícone para fechar o popup
+import { loginRequest } from '../../services/Service.js';
 import './Login.css';
+import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric.jsx';
 
 function Login() {
   const navigate = useNavigate();
@@ -30,10 +26,13 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const credentials = { email, password };
-      console.log('Login bem-sucedido:', credentials);
-      // Simulação de login bem-sucedido
-      if (credentials.email && credentials.password) {
+      const credentials = { login: email, password };
+
+      console.log(
+
+      );
+      if (email !== null && email.trim() !== '' && password !== null && password.trim() !== '') {
+        loginRequest(credentials);
         navigate('/profile'); // Redirecionar para o perfil após login bem-sucedido
       }
     } catch (error) {
@@ -189,77 +188,12 @@ function Login() {
         </Box>
       </Box>
 
-      {/* Dialog para recuperação de senha */}
-      <Dialog
+      <ModalGenenric
         open={open}
-        onClose={handleClose}
-        PaperProps={{
-          sx: {
-            borderRadius: '20px',
-            backgroundColor: '#ffc94d',
-            border: '10px solid #f74440',
-            width: '300px',
-          },
-        }}
-      >
-        <DialogTitle sx={{ textAlign: 'center', color: '#f74440', fontWeight: 'bold', fontSize: '20px', position: 'relative' }}>
-          {showChangePassword ? 'ALTERAR SENHA' : 'RECUPERAR SENHA'}
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{ position: 'absolute', right: 8, top: 8, color: '#f74440' }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent dividers sx={{ textAlign: 'center', color: '#f74440' }}>
-          {showChangePassword ? (
-            // Tela de alteração de senha
-            <>
-              <TextField
-                label="Nova Senha"
-                type="password"
-                placeholder="Insira sua nova senha aqui."
-                fullWidth
-                margin="dense"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                sx={{ backgroundColor: '#fff', borderRadius: 1, marginBottom: 2 }}
-              />
-              <TextField
-                label="Confirmar Senha"
-                type="password"
-                placeholder="Confirme sua nova senha aqui."
-                fullWidth
-                margin="dense"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                sx={{ backgroundColor: '#fff', borderRadius: 1, marginBottom: 2 }}
-              />
-              {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
-            </>
-          ) : (
-            // Tela de recuperação de senha
-            <>
-              <DialogContentText sx={{ color: '#f74440' }}>
-                Insira seu e-mail para enviarmos um link de recuperação de sua senha.
-              </DialogContentText>
-              <TextField
-                autoFocus
-                margin="dense"
-                placeholder="Insira seu e-mail aqui."
-                type="email"
-                fullWidth
-                value={forgotEmail}
-                onChange={(e) => setForgotEmail(e.target.value)}
-                sx={{ backgroundColor: '#fff', borderRadius: 1, marginTop: 2 }}
-              />
-              {forgotPasswordError && <p style={{ color: 'red' }}>{forgotPasswordError}</p>}
-            </>
-          )}
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center' }}>
-          {showChangePassword ? (
+        handleClose={handleClose}
+        title={showChangePassword ? 'ALTERAR SENHA' : 'RECUPERAR SENHA'}
+        actions={
+          showChangePassword ? (
             <Button
               onClick={handlePasswordChange}
               sx={{
@@ -283,9 +217,52 @@ function Login() {
             >
               ENVIAR LINK
             </Button>
-          )}
-        </DialogActions>
-      </Dialog>
+          )
+        }
+      >
+        {showChangePassword ? (
+          <>
+            <TextField
+              label="Nova Senha"
+              type="password"
+              placeholder="Insira sua nova senha aqui."
+              fullWidth
+              margin="dense"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              sx={{ backgroundColor: '#fff', borderRadius: 1, marginBottom: 2 }}
+            />
+            <TextField
+              label="Confirmar Senha"
+              type="password"
+              placeholder="Confirme sua nova senha aqui."
+              fullWidth
+              margin="dense"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              sx={{ backgroundColor: '#fff', borderRadius: 1, marginBottom: 2 }}
+            />
+            {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
+          </>
+        ) : (
+          <>
+            <DialogContentText sx={{ color: '#f74440' }}>
+              Insira seu e-mail para enviarmos um link de recuperação de sua senha.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              placeholder="Insira seu e-mail aqui."
+              type="email"
+              fullWidth
+              value={forgotEmail}
+              onChange={(e) => setForgotEmail(e.target.value)}
+              sx={{ backgroundColor: '#fff', borderRadius: 1, marginTop: 2 }}
+            />
+            {forgotPasswordError && <p style={{ color: 'red' }}>{forgotPasswordError}</p>}
+          </>
+        )}
+      </ModalGenenric>
     </Box>
   );
 }
