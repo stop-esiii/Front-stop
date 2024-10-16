@@ -5,18 +5,18 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import HelpIcon from '@mui/icons-material/Help';
 import io from 'socket.io-client';
 
-
 function Profile() {
     const navigate = useNavigate();
     const userName = "Nome do Usuário";
     const [roomCode, setRoomCode] = useState('');
-    const [socket, setsocket] = useState(null)
+    const [socket, setSocket] = useState(null);
+
     useEffect(() => {
         const socket = io('wss://stop-backend.up.railway.app', {
             transports: ['websocket'],
         });
 
-        setsocket(socket);
+        setSocket(socket);
 
         socket.on('connect', () => {
             console.log('Conectado ao WebSocket');
@@ -30,33 +30,35 @@ function Profile() {
             console.log('Desconectado do WebSocket');
         });
 
-        socket.on('join', (data) => {
-            setRoomCode(data);
-        });
-
         return () => {
             socket.disconnect();
         };
     }, []);
-//
-    const handleCreateRoom = () => {
-        const roomData = {
-            id_user: 1,
-            time: 90,
-            rounds: 10,
-            max_members: 10,
-            themes: ['string'],
-        };
-    };
-    const sendMessage = () => {
-        if (socket && 'Teste') {
-            socket.emit('message', "teste");
+
+    const handleEnterLobby = () => {
+        if (socket) {
+            socket.emit('enter_lobby', {code_lobby: 'lobby123', id_user: 1}, (response) => {
+                if (response.status === false) {
+                    console.error(response.msg);
+                } else {
+                    console.log('Lobby data:', response);
+                    navigate('/game-options'); // Redireciona para a página de opções do jogo
+                }
+            });
         }
     };
 
-    const handleJoinRoom = () => {
-        console.log("pegou")
-};
+    const handleLeaveLobby = () => {
+        if (socket) {
+            socket.emit('leave_lobby', {code_lobby: 'lobby123', id_user: 1}, (response) => {
+                if (response.status === false) {
+                    console.error(response.msg);
+                } else {
+                    console.log(response.msg);
+                }
+            });
+        }
+    };
 
     return (
         <Box
@@ -79,7 +81,6 @@ function Profile() {
                     clipPath: 'polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%)',
                 }}
             >
-                {/* Ícone de ajuda */}
                 <IconButton
                     onClick={() => console.log('Ajuda clicada')}
                     sx={{position: 'absolute', top: 8, right: 48, color: '#f74440'}}
@@ -87,7 +88,6 @@ function Profile() {
                     <HelpIcon/>
                 </IconButton>
 
-                {/* Ícone de configurações */}
                 <IconButton
                     onClick={() => console.log('Configurações clicadas')}
                     sx={{position: 'absolute', top: 8, right: 8, color: '#f74440'}}
@@ -95,13 +95,12 @@ function Profile() {
                     <SettingsIcon/>
                 </IconButton>
 
-                {/* Boas-vindas ao usuário */}
                 <Typography
-                    sx={{textAlign: 'center', color: '#f74440', fontWeight: 'bold', fontSize: '20px', marginBottom: 2}}>
+                    sx={{textAlign: 'center', color: '#f74440', fontWeight: 'bold', fontSize: '20px', marginBottom: 2}}
+                >
                     Olá, {userName}
                 </Typography>
 
-                {/* Avatar */}
                 <Box
                     sx={{
                         width: 100,
@@ -112,16 +111,13 @@ function Profile() {
                         marginBottom: 2,
                     }}
                 >
-                    {/* Aqui pode adicionar a imagem do avatar do usuário */}
                 </Box>
 
-                {/* Status da Conta */}
                 <Typography sx={{textAlign: 'center', color: '#000', fontWeight: 'bold', marginBottom: 2}}>
                     Conta Free <br/>
                     <Typography sx={{color: '#f74440'}}>Seja Premium.</Typography>
                 </Typography>
 
-                {/* Botões de ações */}
                 <Button
                     variant="contained"
                     fullWidth
@@ -131,9 +127,9 @@ function Profile() {
                         fontWeight: 'bold',
                         marginBottom: 2,
                     }}
-                    onClick={sendMessage}
+                    onClick={handleEnterLobby}
                 >
-                    CRIAR PARTIDA
+                    ENTRAR EM PARTIDA
                 </Button>
                 <Button
                     variant="contained"
@@ -143,9 +139,9 @@ function Profile() {
                         color: '#fff',
                         fontWeight: 'bold',
                     }}
-                    onClick={handleJoinRoom}
+                    onClick={handleLeaveLobby}
                 >
-                    ENTRAR EM PARTIDA
+                    SAIR DA PARTIDA
                 </Button>
                 {roomCode && (
                     <Typography sx={{textAlign: 'center', color: '#f74440', fontWeight: 'bold', marginTop: 2}}>
