@@ -32,6 +32,14 @@ const useWebSocket = (url) => {
       console.log(data)
     });
 
+    socketInstance.on('enter_lobby', (data) => {
+      console.log('Usuario entrou na sala:', data.time);
+      console.log('Usuario entrou na sala:', data.number_members);
+      console.log('Usuario entrou na sala:', data.themes);
+      console.log(data)
+      alert(data)
+    });
+
     // Função de limpeza (disconnect) ao desmontar
     return () => {
       socketInstance.disconnect();
@@ -52,8 +60,14 @@ const useWebSocket = (url) => {
     }
 };
 
+  const handleEnterRoom = (event,data) => {
+    if (socket) {
+        socket.emit(event, data);
+    }
+  };
+
   // Retornar o socket e outras informações para reutilização
-  return { socket, isConnected, roomCode,themes,sendMessage,handleCreateRoom };
+  return { socket, isConnected, roomCode,themes,sendMessage,handleCreateRoom,handleEnterRoom };
 };
 
 export default useWebSocket;
