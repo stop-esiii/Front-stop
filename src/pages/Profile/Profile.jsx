@@ -13,7 +13,7 @@ import WaitingPlayersModal from "./WaitingPlayersModal.jsx"
 import useWebSocket from "../../services/WebSocket.js"
 
 function Profile() {
-    const { isConnected, roomCode,handleCreateRoom,themes } = useWebSocket('http://localhost:5000');
+    const { isConnected, roomCode,handleCreateRoom,handleEnterRoom,themes } = useWebSocket('https://stop-backend.up.railway.app');
  
     const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
@@ -166,10 +166,16 @@ function Profile() {
                 >
                     ENTRAR EM PARTIDA
                 </Button>
+
+             
+                    <Typography sx={{textAlign: 'center', color: '#f74440', fontWeight: 'bold', marginTop: 2}}>
+                        Código da sala: {roomCode}
+                    </Typography>
+                
                 
 
             <GameOptionsModal open={isModalOpen} onClose={handleCloseModal}  handleCreateGame={handleCreateRoom} roomCode={roomCode} game_themes={themes}/>
-            <EnterGameModal open={isModalOpen2} onClose={handleCloseModal2}></EnterGameModal>
+            <EnterGameModal open={isModalOpen2} handleJoinGame={handleEnterRoom} roomCode={roomCode} onClose={handleCloseModal2}></EnterGameModal>
             </Box>
 
         </Box>

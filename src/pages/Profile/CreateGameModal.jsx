@@ -45,7 +45,9 @@ useEffect(() => {
             max_members: 10,
             // themes: themes,
         };
+        alert("a")
         handleCreateGame('create_lobby',roomData)
+        console.log(roomCode)
         if(roomData){
           setModalOpen3(true)
 
