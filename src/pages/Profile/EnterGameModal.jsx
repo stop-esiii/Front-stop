@@ -1,17 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Box,Dialog,DialogContent, Button, Typography, TextField, IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import {useNavigate} from 'react-router-dom';
 
-function EnterGameModal({open, onClose}) {
+function EnterGameModal({open, onClose,roomCode,handleJoinGame}) {
   const [code, setCode] = useState('');
+  const [userinfo,setUserInfo] = useState({});
+  const navigate = useNavigate();
 
   const handleCodeChange = (event) => {
     setCode(event.target.value);
   };
 
+  useEffect(() => {
+    const userCache = JSON.parse(localStorage.getItem('userInfo'));
+
+    if (userCache && userCache.token) {
+        console.log(userCache.token);
+        setUserInfo(userCache)
+    } else {
+        navigate("/");
+    }
+   
+  }, []);
+
   const handleEnter = () => {
-    // Lógica para entrar na partida com o código inserido
-    // onEnterClick(code);
+    const roomData = {
+      code_lobby:code,
+      id_user: userinfo.id,
+      // themes: themes,
+    };
+    handleJoinGame('enter_lobby',roomData)
+    console.log(code)
+    // if(roomData){
+    //   alert('ok')
+
+    // }
   };
 
   return (
