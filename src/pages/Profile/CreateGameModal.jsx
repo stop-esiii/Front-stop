@@ -164,6 +164,7 @@ useEffect(() => {
           sx={{ bgcolor: '#f74440', color: '#fff', mt: 2, fontWeight: 'bold'
         }}
         onClick={() => handleJoinRoom()}
+        aria-label={"Criar nova Sala"}
         >
           CRIAR
         </Button>

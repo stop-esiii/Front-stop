@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://stop-backend.up.railway.app/api';
 
 export const loginRequest = async (credentials) => {
   return axios.post(`${API_URL}/auth`, credentials)
