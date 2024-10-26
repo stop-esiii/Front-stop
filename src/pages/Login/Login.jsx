@@ -7,7 +7,7 @@ import {
   DialogContentText,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { loginRequest,getUserById } from '../../services/Requests.js';
+import { loginRequest, getUserById } from '../../services/Requests.js';
 import './Login.css';
 import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric.jsx';
 import ErrorModal from '../../shared/components/ErrorModal/ErrorModal.jsx';
@@ -34,11 +34,11 @@ function Login() {
       const response = await loginRequest(credentials);
 
       if (!response.success) {
-        const userInfo = await getUserById(response.id_user,response.access_token)
+        const userInfo = await getUserById(response.id_user, response.access_token)
         alert(response)
-        
+
         localStorage.setItem('userInfo', JSON.stringify({
-          id:response.id_user,
+          id: response.id_user,
           email: userInfo.user.email,
           id_type_role: userInfo.user.id_type_role,
           image: userInfo.user.image,
@@ -46,19 +46,19 @@ function Login() {
           username: userInfo.user.username,
           token: response.access_token,
         }));
-          // Redirecionar ou fazer algo após o login
+        // Redirecionar ou fazer algo após o login
 
-      
 
-        
+
+
         navigate('/profile');
-       
-      }
-          // Armazena o token no localStorage
-       
-    
 
-      
+      }
+      // Armazena o token no localStorage
+
+
+
+
     } catch (error) {
       console.log(error)
       setErrorMessage('Erro ao fazer login. Verifique suas credenciais.');
