@@ -1,69 +1,140 @@
-import React from 'react';
-import { Box, Button, Typography, TextField, IconButton } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
+import { Box, Button, Typography, TextField, IconButton } from '@/components/ui/alert';
+import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-function GameOptions() {
+const GameOptions = () => {
   const navigate = useNavigate();
+  const [socket, setSocket] = useState(null);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [lobbyCode, setLobbyCode] = useState('');
+  
+  // Inicializa a conexão do socket
+  useEffect(() => {
+    // Substitua pela URL do seu servidor
+    const newSocket = io('http://localhost:3000', {
+      auth: {
+        userId: 1, // Você deve pegar isso do seu sistema de autenticação
+        username: "StopMan"
+      }
+    });
 
-  const handleCreateGame = () => {
-    // Redirecionar para a tela de sorteio de letra com o número total de rodadas
-    navigate('/draw-letter', { state: { totalRounds: 5 } });
+    newSocket.on('connect', () => {
+      console.log('Conectado ao servidor');
+    });
+
+    newSocket.on('connect_error', (err) => {
+      setError('Erro de conexão com o servidor');
+      console.error('Erro de conexão:', err);
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  // Listener para respostas do servidor
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('enter_lobby_response', (response) => {
+      setIsLoading(false);
+      
+      if (!response.status) {
+        setError(response.msg);
+        return;
+      }
+
+      // Navega para a próxima tela com os dados do lobby
+      navigate('/draw-letter', { 
+        state: { 
+          totalRounds: response.rounds,
+          time: response.time,
+          maxMembers: response.max_members,
+          numberMembers: response.number_members,
+          themes: response.themes,
+          lobbyCode: lobbyCode
+        } 
+      });
+    });
+
+    return () => {
+      socket.off('enter_lobby_response');
+    };
+  }, [socket, navigate, lobbyCode]);
+
+  const handleJoinLobby = () => {
+    if (!lobbyCode) {
+      setError('Por favor, insira o código do lobby');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+    
+    socket.emit('enter_lobby', {
+      code_lobby: lobbyCode,
+      id_user: 1 // Você deve pegar isso do seu sistema de autenticação
+    });
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: '#f74440',
-      }}
-    >
-      <Box
-        sx={{
-          width: 400,
-          padding: 3,
-          borderRadius: 4,
+    <Box className="flex justify-center items-center h-screen" style={{ backgroundColor: '#f74440' }}>
+      <Box 
+        className="w-96 p-6 relative"
+        style={{
           backgroundColor: '#ffc94d',
-          position: 'relative',
+          borderRadius: '16px',
           border: '10px solid #f74440',
-          clipPath: 'polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%)',
+          clipPath: 'polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%)'
         }}
       >
-        {/* Botão para voltar */}
-        <IconButton
+        <IconButton 
           onClick={() => navigate('/profile')}
-          sx={{ position: 'absolute', top: 8, left: 8, color: '#f74440' }}
+          className="absolute top-2 left-2"
+          style={{ color: '#f74440' }}
         >
-          <ArrowBackIcon />
+          <ArrowLeft />
         </IconButton>
 
-        <Typography sx={{ textAlign: 'center', color: '#f74440', fontWeight: 'bold', fontSize: '20px', marginBottom: 2 }}>
+        <Typography 
+          className="text-center font-bold text-xl mb-4"
+          style={{ color: '#f74440' }}
+        >
           OPÇÕES DE PARTIDA
         </Typography>
 
-        {/* Aqui ficam as opções de tempo, rodadas, jogadores e temas... */}
+        {error && (
+          <div className="mb-4 p-2 bg-red-100 text-red-600 rounded">
+            {error}
+          </div>
+        )}
 
-        {/* Botão para criar partida */}
+        <TextField
+          value={lobbyCode}
+          onChange={(e) => setLobbyCode(e.target.value)}
+          placeholder="Digite o código do lobby"
+          className="w-full mb-4 p-2 border rounded"
+        />
+
         <Button
-          variant="contained"
-          fullWidth
-          onClick={handleCreateGame} // Navegar para a tela de sorteio de letra
-          sx={{
+          onClick={handleJoinLobby}
+          disabled={isLoading}
+          className="w-full py-2 rounded font-bold"
+          style={{
             backgroundColor: '#f74440',
-            color: '#fff',
-            fontWeight: 'bold',
-            marginTop: 2,
+            color: '#fff'
           }}
         >
-          CRIAR
+          {isLoading ? 'ENTRANDO...' : 'ENTRAR NO LOBBY'}
         </Button>
       </Box>
     </Box>
   );
-}
+};
 
 export default GameOptions;
-
