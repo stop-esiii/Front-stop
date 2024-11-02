@@ -9,7 +9,7 @@ const useWebSocket = (url) => {
 
   useEffect(() => {
     // Inicializar a conexão com o WebSocket
-    const socketInstance = io(url);
+    const socketInstance = io('https://stop-backend.up.railway.app');
 
     // Guardar a instância do socket
     setSocket(socketInstance);
