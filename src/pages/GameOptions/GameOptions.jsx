@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
-import { Box, Button, Typography, TextField, IconButton } from '@/components/ui/alert';
+import { Box, Button, Typography, TextField, IconButton } from '@mui/material';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

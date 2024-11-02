@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Home from './pages/home/Home';
+import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Profile from './pages/Profile/Profile';
@@ -11,7 +11,7 @@ import DrawLetter from './pages/DrawLetter/DrawLetter';
 import GameScreen from './pages/GameScreen/GameScreen';
 import StopScreen from './pages/StopScreen/StopScreen';
 import ValidationScreen from './pages/ValidationScreen/ValidationScreen';
-import WaitingRoom from './pages/WaitingRoom/WaitingRoom'; // Importar a nova página
+import WaitingRoom from './pages/WaintingRoom/WaintigRoom'; // Importar a nova página
 
 const theme = createTheme({
   palette: {
