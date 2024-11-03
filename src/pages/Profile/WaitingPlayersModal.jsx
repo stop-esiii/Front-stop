@@ -48,16 +48,18 @@ const LoadingWrapper = styled(Box)({
 });
 
 function Themes({gameThemes}){
-    return <>
-    {gameThemes.map((theme) => (
-      <Chip
-        key={theme}
-        label={theme}
-        // onDelete={() => handleDeleteTheme(theme)} // Descomente se precisar da funcionalidade de exclusão
-        sx={{ bgcolor: '#ff7043', color: '#fff' }}
-      />
-    ))}
-  </>
+    if (gameThemes){
+      return <>
+      {gameThemes.map((theme) => (
+        <Chip
+          key={theme}
+          label={theme}
+          // onDelete={() => handleDeleteTheme(theme)} // Descomente se precisar da funcionalidade de exclusão
+          sx={{ bgcolor: '#ff7043', color: '#fff' }}
+        />
+      ))}
+    </>
+    }
 }
 function PLayer2({ isInLobby }) {
   if (isInLobby===true) {

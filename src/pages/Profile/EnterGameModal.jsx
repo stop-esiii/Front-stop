@@ -11,7 +11,7 @@ function EnterGameModal({open, onClose,roomCode,handleJoinGame}) {
   const [isModalOpen3, setModalOpen3] = useState(false);
   const [gameInfo,setGameInfo] = useState({});
   const [isInLobby,setIsInLobby]=useState({});
-  const [gameThemes,setGameThemes]=useState({});
+  const [gameThemes,setGameThemes]=useState([]);
   const handleCodeChange = (event) => {
     setCode(event.target.value);
   };
