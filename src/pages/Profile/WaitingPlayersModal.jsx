@@ -46,8 +46,21 @@ const LoadingWrapper = styled(Box)({
   top: '10px',
   right: '10px',
 });
-function PLayer2({ name, isInLobby }) {
-  if (isInLobby) {
+
+function Themes({gameThemes}){
+    return <>
+    {gameThemes.map((theme) => (
+      <Chip
+        key={theme}
+        label={theme}
+        // onDelete={() => handleDeleteTheme(theme)} // Descomente se precisar da funcionalidade de exclusão
+        sx={{ bgcolor: '#ff7043', color: '#fff' }}
+      />
+    ))}
+  </>
+}
+function PLayer2({ isInLobby }) {
+  if (isInLobby===true) {
     return <PlayerBox>Jogador 2</PlayerBox>
   }
 }
@@ -55,6 +68,9 @@ function PLayer2({ name, isInLobby }) {
 function GameModal  ({ open, onClose, gameCode,game_themes }) {
   const navigate = useNavigate();
   const [userinfo,setUserInfo] = useState({});
+  const [gameInfo,setGameInfo] = useState({});
+  const [isInLobby,setIsInLobby]=useState({});
+  const [gameThemes,setGameThemes]=useState({});
   
   useEffect(() => {
       const userCache = JSON.parse(localStorage.getItem('userInfo'));
@@ -65,9 +81,26 @@ function GameModal  ({ open, onClose, gameCode,game_themes }) {
       } else {
           navigate("/");
       }
-      
   }, []);
 
+  useEffect(() => {
+    const checkGameInfo = () => {
+      const gameCache = JSON.parse(localStorage.getItem('gameInfo'));
+  
+      if (gameCache) {
+        setGameInfo(gameCache);
+        setIsInLobby(true);
+      } else {
+        setIsInLobby(false);
+      }
+    };
+
+    checkGameInfo();
+    const intervalId = setInterval(checkGameInfo, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  
   
   return (
     <Dialog open={open} onClose={onClose}>
@@ -90,19 +123,12 @@ function GameModal  ({ open, onClose, gameCode,game_themes }) {
             TEMAS DA PARTIDA
           </Typography>
           <Box display="flex" alignContent="center" flexWrap="wrap" gap={1} mb={2}>
-                {game_themes.map((theme) => (
-                    <Chip
-                    key={theme}
-                    label={theme}
-                    // onDelete={() => handleDeleteTheme(theme)}
-                    sx={{ bgcolor: '#ff7043', color: '#fff' }}
-                    />
-                ))}
-                </Box>
+            <Themes gameThemes={game_themes}></Themes>
+          </Box>
           
           <PlayerGrid>
             <PlayerBox>{userinfo.username}</PlayerBox>
-            <PLayer2></PLayer2>
+            <PLayer2 isInLobby={isInLobby}></PLayer2>
           </PlayerGrid>
           
           <div className="gif-container">

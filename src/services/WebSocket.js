@@ -6,6 +6,7 @@ const useWebSocket = (url) => {
   const [isConnected, setIsConnected] = useState(false);
   const [roomCode, setRoomCode] = useState('');
   const [themes, setThemes] = useState([]);
+  const [gameInfo,setGameInfo] = useState({})
 
   useEffect(() => {
     // Inicializar a conexão com o WebSocket
@@ -38,6 +39,15 @@ const useWebSocket = (url) => {
       console.log('Usuario entrou na sala:', data.themes);
       console.log(data)
       alert(data)
+      localStorage.setItem('gameInfo', JSON.stringify(
+        {
+          "time": data.time,
+          "rounds": data.rounds,
+          "max_members": data.max_members,
+          "number_members": data.number_members,
+          "themes": data.themes
+        }
+      ));
     });
 
     // Função de limpeza (disconnect) ao desmontar

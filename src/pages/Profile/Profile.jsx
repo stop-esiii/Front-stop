@@ -13,7 +13,7 @@ import WaitingPlayersModal from "./WaitingPlayersModal.jsx"
 import useWebSocket from "../../services/WebSocket.js"
 
 function Profile() {
-    const { isConnected, roomCode,handleCreateRoom,handleEnterRoom,themes } = useWebSocket('https://stop-backend.up.railway.app');
+    const { isConnected, roomCode,handleCreateRoom,handleEnterRoom,themes,gameInfo } = useWebSocket('https://stop-backend.up.railway.app');
  
     const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
