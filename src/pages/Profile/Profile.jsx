@@ -1,27 +1,28 @@
-import React, {useState, useEffect} from 'react';
-import {Box, Button, Typography, IconButton,Chip} from '@mui/material';
-import {useNavigate} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Typography, IconButton, Chip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HelpIcon from '@mui/icons-material/Help';
 import io from 'socket.io-client';
 import { LogoutOutlined } from '@mui/icons-material';
-import { logOut} from '../../services/Requests.js';
+import { logOut } from '../../services/Requests.js';
 import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric.jsx';
 import GameOptionsModal from "./CreateGameModal.jsx"
 import EnterGameModal from './EnterGameModal.jsx';
 import WaitingPlayersModal from "./WaitingPlayersModal.jsx"
 import useWebSocket from "../../services/WebSocket.js"
+import { getItem, removeItem } from '../../services/StorageService.js'
 
 function Profile() {
-    const { isConnected, roomCode,handleCreateRoom,handleEnterRoom,themes,gameInfo } = useWebSocket('https://stop-backend.up.railway.app');
- 
+    const { isConnected, roomCode, handleCreateRoom, handleEnterRoom, themes } = useWebSocket('https://stop-backend.up.railway.app');
+
     const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
     const [isModalOpen2, setModalOpen2] = useState(false);
-    const [userinfo,setUserInfo] = useState({});
-   
+    const [userinfo, setUserInfo] = useState({});
+
     useEffect(() => {
-        const userCache = JSON.parse(localStorage.getItem('userInfo'));
+        const userCache = JSON.parse(getItem('userInfo'));
 
         if (userCache && userCache.token) {
             console.log("Token encontrado");
@@ -29,9 +30,9 @@ function Profile() {
         } else {
             navigate("/");
         }
-        
+
     }, []);
-    
+
 
 
     const handleCloseModal = () => {
@@ -42,25 +43,25 @@ function Profile() {
     const handleCloseModal2 = () => {
         setModalOpen2(!isModalOpen2);  // Fecha o modal
     };
- 
-    const openCreateGame=()=>{
+
+    const openCreateGame = () => {
         setModalOpen(true)
     }
- 
+
 
     const logOutUser = async (token) => {
-        if (token===null) {
+        if (token === null) {
             navigate("/");
-            
-        } 
+
+        }
         await logOut(token);
-        localStorage.removeItem('userInfo')
+        removeItem('userInfo')
         navigate("/");
     };
 
     const handleJoinRoom = () => {
         setModalOpen2(true)
-};
+    };
 
 
 
@@ -88,30 +89,30 @@ function Profile() {
                 {/* Ícone de ajuda */}
                 <IconButton
                     onClick={() => console.log('Ajuda clicada')}
-                    
-                    sx={{position: 'absolute', top: 16, right: 80, color: '#f74440'}}
+
+                    sx={{ position: 'absolute', top: 16, right: 80, color: '#f74440' }}
                 >
-                    <HelpIcon/>
+                    <HelpIcon />
                 </IconButton>
 
                 {/* Ícone de configurações */}
                 <IconButton
                     onClick={() => console.log('Configurações clicadas')}
-                    sx={{position: 'absolute', top: 16, right: 40, color: '#f74440'}}
+                    sx={{ position: 'absolute', top: 16, right: 40, color: '#f74440' }}
                 >
-                    <SettingsIcon/>
+                    <SettingsIcon />
                 </IconButton>
 
                 <IconButton
                     onClick={() => logOutUser(userinfo.token)}
-                    sx={{position: 'absolute', top: 16, left: 40, color: '#f74440'}}
+                    sx={{ position: 'absolute', top: 16, left: 40, color: '#f74440' }}
                 >
-                    <LogoutOutlined/>
+                    <LogoutOutlined />
                 </IconButton>
 
                 {/* Boas-vindas ao usuário */}
                 <Typography
-                    sx={{textAlign: 'center', color: '#f74440', fontWeight: 'bold', fontSize: '20px', marginBottom: 2}}>
+                    sx={{ textAlign: 'center', color: '#f74440', fontWeight: 'bold', fontSize: '20px', marginBottom: 2 }}>
                     Olá, {userinfo.username}
                 </Typography>
 
@@ -124,18 +125,18 @@ function Profile() {
                         borderRadius: '50%',
                         margin: '0 auto',
                         marginBottom: 2,
-                        backgroundImage:`url(${userinfo.image})`,
-                        backgroundSize: 'cover', 
-                        backgroundPosition: 'center', 
+                        backgroundImage: `url(${userinfo.image})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
                     }}
                 >
                     {/* Aqui pode adicionar a imagem do avatar do usuário */}
                 </Box>
 
                 {/* Status da Conta */}
-                <Typography sx={{textAlign: 'center', color: '#000', fontWeight: 'bold', marginBottom: 2}}>
-                    Conta Free <br/>
-                    <Typography sx={{color: '#f74440'}}>Seja Premium.</Typography>
+                <Typography sx={{ textAlign: 'center', color: '#000', fontWeight: 'bold', marginBottom: 2 }}>
+                    Conta Free <br />
+                    <Typography sx={{ color: '#f74440' }}>Seja Premium.</Typography>
                 </Typography>
 
                 {/* Botões de ações */}
@@ -165,19 +166,19 @@ function Profile() {
                     ENTRAR EM PARTIDA
                 </Button>
 
-             
-                    <Typography sx={{textAlign: 'center', color: '#f74440', fontWeight: 'bold', marginTop: 2}}>
-                        Código da sala: {roomCode}
-                    </Typography>
-                
-                
 
-            <GameOptionsModal open={isModalOpen} onClose={handleCloseModal}  handleCreateGame={handleCreateRoom} roomCode={roomCode} game_themes={themes}/>
-            <EnterGameModal open={isModalOpen2} handleJoinGame={handleEnterRoom} roomCode={roomCode} onClose={handleCloseModal2}></EnterGameModal>
+                <Typography sx={{ textAlign: 'center', color: '#f74440', fontWeight: 'bold', marginTop: 2 }}>
+                    Código da sala: {roomCode}
+                </Typography>
+
+
+
+                <GameOptionsModal open={isModalOpen} onClose={handleCloseModal} handleCreateGame={handleCreateRoom} roomCode={roomCode} game_themes={themes} />
+                <EnterGameModal open={isModalOpen2} handleJoinGame={handleEnterRoom} roomCode={roomCode} onClose={handleCloseModal2}></EnterGameModal>
             </Box>
 
         </Box>
-        
+
     );
 }
 

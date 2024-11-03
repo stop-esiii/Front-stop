@@ -1,3 +1,4 @@
+import './Login.css';
 import React, { useState } from 'react';
 import {
   TextField,
@@ -7,10 +8,11 @@ import {
   DialogContentText,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { setItem } from '../../services/StorageService.js';
+import { validateEmail } from '../../services/UtilsServices.js'
 import { loginRequest, getUserById } from '../../services/Requests.js';
-import './Login.css';
-import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric.jsx';
 import ErrorModal from '../../shared/components/ErrorModal/ErrorModal.jsx';
+import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric.jsx';
 
 function Login() {
   const navigate = useNavigate();
@@ -34,30 +36,23 @@ function Login() {
       const response = await loginRequest(credentials);
 
       if (!response.success) {
-        const userInfo = await getUserById(response.id_user, response.access_token)
-        alert(response)
 
-        localStorage.setItem('userInfo', JSON.stringify({
+        const userInfo = await getUserById(response.id_user, response.access_token)
+
+        setItem('userInfo', JSON.stringify({
           id: response.id_user,
           email: userInfo.user.email,
           id_type_role: userInfo.user.id_type_role,
           image: userInfo.user.image,
           themes: userInfo.user.themes,
           username: userInfo.user.username,
-          token: response.access_token,
+          token: response.access_token
         }));
-        // Redirecionar ou fazer algo após o login
-
-
-
 
         navigate('/profile');
 
       }
       // Armazena o token no localStorage
-
-
-
 
     } catch (error) {
       console.log(error)
@@ -77,10 +72,7 @@ function Login() {
     setPasswordError('');
   };
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+
 
   const handleSendRecoveryEmail = () => {
     if (!forgotEmail) {
