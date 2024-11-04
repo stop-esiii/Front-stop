@@ -20,7 +20,8 @@ function GameOptionsModal({ open, onClose,handleCreateGame,roomCode,game_themes 
 
 
   const handleCloseModal3 = () => {
-    setModalOpen3(!isModalOpen3);  // Fecha o modal
+    setModalOpen3(!isModalOpen3);  
+    localStorage.removeItem('gameInfo')// Fecha o modal
 };
 
 
@@ -77,7 +78,7 @@ useEffect(() => {
   return (
     <Box >
  <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" >
-      <DialogContent sx={{ bgcolor: '#ffdd60', p: 3, position: 'relative' }}>
+      <DialogContent sx={{ bgcolor: '#FFC44D', p: 3, position: 'relative' }}>
         {/* Back Button */}
         <IconButton 
           onClick={onClose} 

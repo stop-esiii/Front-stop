@@ -1,9 +1,14 @@
-import React from 'react';
-import { Dialog, DialogContent,Chip, Typography, Box, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import {Image, StyleSheet} from 'react';
+import loading_gif from './Loading-Stop.gif'
+import './gif.css'
+import React, {useState, useEffect} from 'react';
+import { Dialog, DialogContent,Chip, Typography, Box, CircularProgress,IconButton} from '@mui/material';
+import {useNavigate} from 'react-router-dom';
 
 const ModalWrapper = styled(Box)({
-  backgroundColor: '#ffdd60',
+  backgroundColor: '#FFC44D',
   padding: '20px',
   width: '400px',
   textAlign: 'center',
@@ -42,11 +47,73 @@ const LoadingWrapper = styled(Box)({
   right: '10px',
 });
 
-const GameModal = ({ open, onClose, gameCode,game_themes }) => {
+function Themes({gameThemes}){
+    if (gameThemes){
+      return <>
+      {gameThemes.map((theme) => (
+        <Chip
+          key={theme}
+          label={theme}
+          // onDelete={() => handleDeleteTheme(theme)} // Descomente se precisar da funcionalidade de exclusão
+          sx={{ bgcolor: '#ff7043', color: '#fff' }}
+        />
+      ))}
+    </>
+    }
+}
+function PLayer2({ isInLobby }) {
+  if (isInLobby===true) {
+    return <PlayerBox>Jogador 2</PlayerBox>
+  }
+}
+
+function GameModal  ({ open, onClose, gameCode,game_themes }) {
+  const navigate = useNavigate();
+  const [userinfo,setUserInfo] = useState({});
+  const [gameInfo,setGameInfo] = useState({});
+  const [isInLobby,setIsInLobby]=useState({});
+  const [gameThemes,setGameThemes]=useState({});
+  
+  useEffect(() => {
+      const userCache = JSON.parse(localStorage.getItem('userInfo'));
+      
+      if (userCache && userCache.token) {
+          console.log("Token encontrado");
+          setUserInfo(userCache)
+      } else {
+          navigate("/");
+      }
+  }, []);
+
+  useEffect(() => {
+    const checkGameInfo = () => {
+      const gameCache = JSON.parse(localStorage.getItem('gameInfo'));
+  
+      if (gameCache) {
+        setGameInfo(gameCache);
+        setIsInLobby(true);
+      } else {
+        setIsInLobby(false);
+      }
+    };
+
+    checkGameInfo();
+    const intervalId = setInterval(checkGameInfo, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  
+  
   return (
     <Dialog open={open} onClose={onClose}>
         <ModalWrapper>
-          <BackArrow onClick={onClose}>⬅️</BackArrow>
+        
+          <IconButton
+          onClick={onClose}
+          sx={{ position: 'absolute', top: 8, left: 8, color: '#f74440' }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
           <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
             AGUARDANDO JOGADORES
           </Typography>
@@ -57,28 +124,19 @@ const GameModal = ({ open, onClose, gameCode,game_themes }) => {
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: '20px' }} >
             TEMAS DA PARTIDA
           </Typography>
-          <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
-                {game_themes.map((theme) => (
-                    <Chip
-                    key={theme}
-                    label={theme}
-                    // onDelete={() => handleDeleteTheme(theme)}
-                    sx={{ bgcolor: '#ff7043', color: '#fff' }}
-                    />
-                ))}
-                </Box>
+          <Box display="flex" alignContent="center" flexWrap="wrap" gap={1} mb={2}>
+            <Themes gameThemes={game_themes}></Themes>
+          </Box>
           
           <PlayerGrid>
-            <PlayerBox>*NOME*</PlayerBox>
-            <PlayerBox>*NOME*</PlayerBox>
-            <PlayerBox>*NOME*</PlayerBox>
-            <PlayerBox>*NOME*</PlayerBox>
+            <PlayerBox>{userinfo.username}</PlayerBox>
+            <PLayer2 isInLobby={isInLobby}></PLayer2>
           </PlayerGrid>
           
-          <LoadingWrapper>
-            <CircularProgress />
+          <div className="gif-container">
+            <img src={loading_gif} alt="loading" className="gif"></img>
+          </div>
             
-          </LoadingWrapper>
         </ModalWrapper>
     </Dialog>
   );

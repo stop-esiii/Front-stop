@@ -12,6 +12,8 @@ import GameScreen from './pages/GameScreen/GameScreen';
 import StopScreen from './pages/StopScreen/StopScreen';
 import ValidationScreen from './pages/ValidationScreen/ValidationScreen'; // Importar a nova página
 import { getItem } from './services/StorageService';
+import WaitingRoom from './pages/WaintingRoom/WaintigRoom'; // Importar a nova página
+
 
 const theme = createTheme({
   palette: {

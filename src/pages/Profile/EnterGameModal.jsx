@@ -2,16 +2,23 @@ import React, { useState,useEffect } from 'react';
 import { Box,Dialog,DialogContent, Button, Typography, TextField, IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {useNavigate} from 'react-router-dom';
+import WaitingPlayersModal from "./WaitingPlayersModal.jsx"
 
 function EnterGameModal({open, onClose,roomCode,handleJoinGame}) {
   const [code, setCode] = useState('');
   const [userinfo,setUserInfo] = useState({});
   const navigate = useNavigate();
-
+  const [isModalOpen3, setModalOpen3] = useState(false);
+  const [gameInfo,setGameInfo] = useState({});
+  const [isInLobby,setIsInLobby]=useState({});
+  const [gameThemes,setGameThemes]=useState([]);
   const handleCodeChange = (event) => {
     setCode(event.target.value);
   };
 
+  const handleCloseModal3 = () => {
+    setModalOpen3(!isModalOpen3);  
+};
   useEffect(() => {
     const userCache = JSON.parse(localStorage.getItem('userInfo'));
 
@@ -24,6 +31,25 @@ function EnterGameModal({open, onClose,roomCode,handleJoinGame}) {
    
   }, []);
 
+  useEffect(() => {
+    const checkGameInfo = () => {
+      const gameCache = JSON.parse(localStorage.getItem('gameInfo'));
+  
+      if (gameCache) {
+        setGameInfo(gameCache);
+        setGameThemes(gameCache.themes)
+        setIsInLobby(true);
+      } else {
+        setIsInLobby(false);
+      }
+    };
+
+    checkGameInfo();
+    const intervalId = setInterval(checkGameInfo, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+
   const handleEnter = () => {
     const roomData = {
       code_lobby:code,
@@ -32,6 +58,7 @@ function EnterGameModal({open, onClose,roomCode,handleJoinGame}) {
     };
     handleJoinGame('enter_lobby',roomData)
     console.log(code)
+    setModalOpen3(true)
     // if(roomData){
     //   alert('ok')
 
@@ -102,8 +129,12 @@ function EnterGameModal({open, onClose,roomCode,handleJoinGame}) {
       </Button>
       </DialogContent>
       </Dialog>
+    
+      <WaitingPlayersModal open={isModalOpen3} onClose={handleCloseModal3} gameCode= {code} game_themes={gameThemes}> </WaitingPlayersModal>
+      
     </Box>
   );
+
 }
 
 export default EnterGameModal;

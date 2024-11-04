@@ -1,0 +1,17 @@
+.gif{
+    width: 7vmin;
+    margin-top: 50px;
+    /* animation: gif-play 10s linear infinite;  */
+    animation: gif-play 1s steps(10) infinite
+}
+.gif-container:hover .gif {
+    animation-duration: 1s; /* Speed up on hover */
+}
+@keyframes gif-play {
+    from {
+        transform: translateY(10);
+    }
+    to {
+        transform: translateY(100);
+    }
+}
