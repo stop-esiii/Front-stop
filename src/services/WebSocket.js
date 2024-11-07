@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
+import {getItem, setItem} from './StorageService';
 
 const useWebSocket = (url) => {
   const [socket, setSocket] = useState(null);
@@ -7,6 +8,7 @@ const useWebSocket = (url) => {
   const [roomCode, setRoomCode] = useState('');
   const [themes, setThemes] = useState([]);
   const [gameInfo,setGameInfo] = useState({})
+  const [players, setPlayers] = useState([]);
 
   useEffect(() => {
     // Inicializar a conexão com o WebSocket
@@ -34,20 +36,8 @@ const useWebSocket = (url) => {
     });
 
     socketInstance.on('enter_lobby', (data) => {
-      console.log('Usuario entrou na sala:', data.time);
-      console.log('Usuario entrou na sala:', data.number_members);
-      console.log('Usuario entrou na sala:', data.themes);
-      console.log(data)
-      alert(data)
-      localStorage.setItem('gameInfo', JSON.stringify(
-        {
-          "time": data.time,
-          "rounds": data.rounds,
-          "max_members": data.max_members,
-          "number_members": data.number_members,
-          "themes": data.themes
-        }
-      ));
+       setPlayers(  prevPlayers => [...prevPlayers, data.playerName])
+
     });
 
     // Função de limpeza (disconnect) ao desmontar
@@ -65,19 +55,39 @@ const useWebSocket = (url) => {
   };
 
   const handleCreateRoom = (event,data) => {
+    debugger
     if (socket) {
+        setItem('gameInfo', JSON.stringify(
+            {
+                "time": data.time,
+                "rounds": data.rounds,
+                "max_members": data.max_members,
+                "number_members": data.number_members,
+                "themes": data.themes
+            }));
         socket.emit(event, data);
     }
 };
 
   const handleEnterRoom = (event,data) => {
-    if (socket) {
+    const gameInfo = []
+      console.log(getItem('gameInfo'))
+    if (socket && event == 'enter_lobby') {
+    gameInfo.push( JSON.stringify(
+            {
+                "time": data.time,
+                "rounds": data.rounds,
+                "max_members": data.max_members,
+                "number_members": data.number_members,
+                "themes": data.themes
+            }))
+        setItem('gameInfo', JSON.stringify(gameInfo));
         socket.emit(event, data);
     }
   };
 
   // Retornar o socket e outras informações para reutilização
-  return { socket, isConnected, roomCode,themes,sendMessage,handleCreateRoom,handleEnterRoom };
+  return { socket, players, isConnected, roomCode,themes,sendMessage,handleCreateRoom,handleEnterRoom };
 };
 
 export default useWebSocket;

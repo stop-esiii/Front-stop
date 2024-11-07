@@ -1,9 +1,9 @@
 import axios from 'axios';
+import { BASE_URL } from '../Utils/system';
 
-const API_URL = 'https://stop-backend.up.railway.app/api';
 
 export const loginRequest = async (credentials) => {
-  return axios.post(`${API_URL}/auth`, credentials)
+  return axios.post(`${BASE_URL}/api/auth`, credentials)
     .then(response => response.data)
     .catch(error => {
       console.error('Erro ao fazer login:', error);
@@ -12,7 +12,7 @@ export const loginRequest = async (credentials) => {
 };
 
 export const logOut = async (token) => {
-  return axios.delete(`${API_URL}/auth`, {
+  return axios.delete(`${BASE_URL}/api/auth`, {
     headers:{
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -27,7 +27,7 @@ export const logOut = async (token) => {
 
 
 export const getUserById = async (user_id,token) => {
-  return axios.get(`${API_URL}/users/${user_id}`,{
+  return axios.get(`${BASE_URL}/api/users/${user_id}`,{
     headers: {
       'Authorization': `Bearer ${token}`, // Adicionando o token no cabeçalho
     },
@@ -40,7 +40,7 @@ export const getUserById = async (user_id,token) => {
 };
 
 export const registerRequest = async (requestBody) => {
-  return axios.post(`${API_URL}/users`, requestBody)
+  return axios.post(`${BASE_URL}/api/users`, requestBody)
     .then(response => response.data)
     .catch(error => {
       console.error('Erro ao fazer login:', error);

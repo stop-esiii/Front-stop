@@ -3,37 +3,19 @@ import { Box, Button, Typography, IconButton, Chip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HelpIcon from '@mui/icons-material/Help';
-import io from 'socket.io-client';
 import { LogoutOutlined } from '@mui/icons-material';
-import { logOut } from '../../services/Requests.js';
-import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric.jsx';
 import GameOptionsModal from "./CreateGameModal.jsx"
 import EnterGameModal from './EnterGameModal.jsx';
-import WaitingPlayersModal from "./WaitingPlayersModal.jsx"
 import useWebSocket from "../../services/WebSocket.js"
 import { getItem, removeItem } from '../../services/StorageService.js'
 
 function Profile() {
-    const { isConnected, roomCode, handleCreateRoom, handleEnterRoom, themes } = useWebSocket('https://stop-backend.up.railway.app');
+    const {roomCode, handleCreateRoom, handleEnterRoom, themes } = useWebSocket('https://stop-backend.up.railway.app');
 
     const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
     const [isModalOpen2, setModalOpen2] = useState(false);
-    const [userinfo, setUserInfo] = useState({});
-
-    useEffect(() => {
-        const userCache = JSON.parse(getItem('userInfo'));
-
-        if (userCache && userCache.token) {
-            console.log("Token encontrado");
-            setUserInfo(userCache)
-        } else {
-            navigate("/");
-        }
-
-    }, []);
-
-
+    const userinfo = getItem('userInfo');
 
     const handleCloseModal = () => {
         setModalOpen(!isModalOpen);  // Fecha o modal
@@ -49,12 +31,7 @@ function Profile() {
     }
 
 
-    const logOutUser = async (token) => {
-        if (token === null) {
-            navigate("/");
-
-        }
-        await logOut(token);
+    const logOutUser =  () => {
         removeItem('userInfo')
         navigate("/");
     };
