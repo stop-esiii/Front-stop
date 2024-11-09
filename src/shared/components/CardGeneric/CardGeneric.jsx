@@ -10,12 +10,13 @@ import {
 import { SendToBackIcon } from 'lucide-react';
 
 
-export default function ModalGenenric({ open, handleClose,handleBack,backEnabled, title, children, actions }) {
+export default function CardGeneric({ handleClose,handleBack,backEnabled, title, children, actions }) {
 
     return (
         <Dialog
-            open={open}
+            open={true}
             onClose={handleClose}
+            hideBackdrop={true}
             PaperProps={{
                 sx: {
                     borderRadius: '20px',
@@ -52,13 +53,6 @@ export default function ModalGenenric({ open, handleClose,handleBack,backEnabled
                         <ArrowBack />
                     </IconButton>
                 )}
-                <IconButton
-                    aria-label="close"
-                    onClick={handleClose}
-                    sx={{ position: 'absolute', right: 8, top: 8, color: '#FFFFFF',backgroundColor:'#EB2D37',border:'5px #EB2D37 solid' }}
-                >
-                    <CloseIcon />
-                </IconButton>
             </DialogTitle>
             <DialogContent dividers sx={{ textAlign: 'left', color: '#FFFFFF' }}>
                 {children}

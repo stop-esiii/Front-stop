@@ -1,9 +1,15 @@
-import React from 'react';
-import { Dialog, DialogContent,Chip, Typography, Box, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import {Image, StyleSheet} from 'react';
+import loading_gif from './Loading-Stop.gif'
+import './gif.css'
+import React, {useState, useEffect} from 'react';
+import { Dialog, DialogContent,Chip, Typography,DialogTitle, Box, CircularProgress,IconButton} from '@mui/material';
+import {useNavigate} from 'react-router-dom';
+import { ArrowBack } from '@mui/icons-material';
 
 const ModalWrapper = styled(Box)({
-  backgroundColor: '#ffdd60',
+  backgroundColor: '#FFC44D',
   padding: '20px',
   width: '400px',
   textAlign: 'center',
@@ -42,44 +48,130 @@ const LoadingWrapper = styled(Box)({
   right: '10px',
 });
 
-const GameModal = ({ open, onClose, gameCode,game_themes }) => {
+function Themes({gameThemes}){
+    if (gameThemes){
+      return <>
+      {gameThemes.map((theme) => (
+        <Chip
+          key={theme}
+          label={theme}
+          // onDelete={() => handleDeleteTheme(theme)} // Descomente se precisar da funcionalidade de exclusão
+          sx={{ bgcolor: '#ff7043', color: '#fff' }}
+        />
+      ))}
+    </>
+    }
+}
+function PLayer2({ isInLobby }) {
+  if (isInLobby===true) {
+    return <PlayerBox>Jogador 2</PlayerBox>
+  }
+}
+
+function GameModal  ({ open, onClose, gameCode,game_themes }) {
+  const navigate = useNavigate();
+  const [userinfo,setUserInfo] = useState({});
+  const [gameInfo,setGameInfo] = useState({});
+  const [isInLobby,setIsInLobby]=useState({});
+  const [gameThemes,setGameThemes]=useState({});
+  
+  useEffect(() => {
+      const userCache = JSON.parse(localStorage.getItem('userInfo'));
+      
+      if (userCache && userCache.token) {
+          console.log("Token encontrado");
+          setUserInfo(userCache)
+      } else {
+          navigate("/");
+      }
+  }, []);
+
+  useEffect(() => {
+    const checkGameInfo = () => {
+      const gameCache = JSON.parse(localStorage.getItem('gameInfo'));
+  
+      if (gameCache) {
+        setGameInfo(gameCache);
+        setIsInLobby(true);
+      } else {
+        setIsInLobby(false);
+      }
+    };
+
+    checkGameInfo();
+    const intervalId = setInterval(checkGameInfo, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  
+  
   return (
-    <Dialog open={open} onClose={onClose}>
-        <ModalWrapper>
-          <BackArrow onClick={onClose}>⬅️</BackArrow>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" PaperProps={{
+      sx: {
+          borderRadius: '20px',
+          backgroundColor: '#084080',
+          border: '10px solid #201E1D',
+          width: '500px',
+          height:'400px',
+          display:'flex',
+          flexDirection:'column',
+          justifyContent:'space-around'
+      },
+  }}>
+        <DialogTitle
+              sx={{
+                  textAlign: 'center',
+                  color: '#FFFFFF',
+                  fontWeight: 'bold',
+                  fontSize: '25px',
+                  position: 'relative',
+                  backgroundColor:'#201E1D'
+              }}
+          >
+          <IconButton
+                        aria-label="back"
+                        onClick={onClose}
+                        sx={{
+                            position: 'absolute',
+                            left: 8,
+                            top: 8,
+                            color: '#FFFFFF',
+                            backgroundColor: '#EB2D37',
+                            border: '5px #EB2D37 solid',
+                        }}
+                    >
+                        <ArrowBack />
+                    </IconButton>
           <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
             AGUARDANDO JOGADORES
           </Typography>
-          <Typography variant="subtitle1">
-            CÓDIGO DE PARTIDA: <span style={{ fontWeight: 'bold' }}>{gameCode}</span>
+
+          </DialogTitle>
+
+          <DialogContent sx={{ bgcolor: '#084080', p: 3, position: 'relative' ,display:'flex',flexDirection:'column',justifyContent:'center',alignContent:'center'}}>
+          <Typography variant="subtitle1"  sx={{color:'white',marginTop:10,fontWeight:'bold'}}>
+            CÓDIGO DE PARTIDA: <span style={{ fontWeight: 'bold',marginTop:10,color:"white" }}>{gameCode}</span>
           </Typography>
 
-          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: '20px' }} >
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: '20px' ,color:'white'}} >
             TEMAS DA PARTIDA
           </Typography>
-          <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
-                {game_themes.map((theme) => (
-                    <Chip
-                    key={theme}
-                    label={theme}
-                    // onDelete={() => handleDeleteTheme(theme)}
-                    sx={{ bgcolor: '#ff7043', color: '#fff' }}
-                    />
-                ))}
-                </Box>
+          <Box display="flex" alignContent="center" flexWrap="wrap" gap={1} mb={2}>
+            <Themes gameThemes={game_themes}></Themes>
+          </Box>
           
           <PlayerGrid>
-            <PlayerBox>*NOME*</PlayerBox>
-            <PlayerBox>*NOME*</PlayerBox>
-            <PlayerBox>*NOME*</PlayerBox>
-            <PlayerBox>*NOME*</PlayerBox>
+            <PlayerBox>{userinfo.username}</PlayerBox>
+            <PLayer2 isInLobby={isInLobby}></PLayer2>
           </PlayerGrid>
           
-          <LoadingWrapper>
-            <CircularProgress />
+          <div className="gif-container">
+            <img src={loading_gif} alt="loading" className="gif"></img>
+          </div>
+
+          </DialogContent>
+          
             
-          </LoadingWrapper>
-        </ModalWrapper>
     </Dialog>
   );
 };

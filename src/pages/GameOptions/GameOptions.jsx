@@ -1,104 +1,140 @@
-// src/pages/GameOptions/GameOptions.jsx
-import React from 'react';
-import {Box, Button, Typography, TextField, IconButton} from '@mui/material';
-import {useNavigate} from 'react-router-dom';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
+import { Box, Button, Typography, TextField, IconButton } from '@mui/material';
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-function GameOptions() {
-    const navigate = useNavigate();
+const GameOptions = () => {
+  const navigate = useNavigate();
+  const [socket, setSocket] = useState(null);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [lobbyCode, setLobbyCode] = useState('');
+  
+  // Inicializa a conexão do socket
+  useEffect(() => {
+    // Substitua pela URL do seu servidor
+    const newSocket = io('http://localhost:3000', {
+      auth: {
+        userId: 1, // Você deve pegar isso do seu sistema de autenticação
+        username: "StopMan"
+      }
+    });
 
-    return (
-        <Box
-            sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                backgroundColor: '#f74440',
-            }}
+    newSocket.on('connect', () => {
+      console.log('Conectado ao servidor');
+    });
+
+    newSocket.on('connect_error', (err) => {
+      setError('Erro de conexão com o servidor');
+      console.error('Erro de conexão:', err);
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  // Listener para respostas do servidor
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('enter_lobby_response', (response) => {
+      setIsLoading(false);
+      
+      if (!response.status) {
+        setError(response.msg);
+        return;
+      }
+
+      // Navega para a próxima tela com os dados do lobby
+      navigate('/draw-letter', { 
+        state: { 
+          totalRounds: response.rounds,
+          time: response.time,
+          maxMembers: response.max_members,
+          numberMembers: response.number_members,
+          themes: response.themes,
+          lobbyCode: lobbyCode
+        } 
+      });
+    });
+
+    return () => {
+      socket.off('enter_lobby_response');
+    };
+  }, [socket, navigate, lobbyCode]);
+
+  const handleJoinLobby = () => {
+    if (!lobbyCode) {
+      setError('Por favor, insira o código do lobby');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+    
+    socket.emit('enter_lobby', {
+      code_lobby: lobbyCode,
+      id_user: 1 // Você deve pegar isso do seu sistema de autenticação
+    });
+  };
+
+  return (
+    <Box className="flex justify-center items-center h-screen" style={{ backgroundColor: '#f74440' }}>
+      <Box 
+        className="w-96 p-6 relative"
+        style={{
+          backgroundColor: '#ffc94d',
+          borderRadius: '16px',
+          border: '10px solid #f74440',
+          clipPath: 'polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%)'
+        }}
+      >
+        <IconButton 
+          onClick={() => navigate('/profile')}
+          className="absolute top-2 left-2"
+          style={{ color: '#f74440' }}
         >
-            <Box
-                sx={{
-                    width: 400,
-                    padding: 3,
-                    borderRadius: 4,
-                    backgroundColor: '#ffc94d',
-                    position: 'relative',
-                    border: '10px solid #f74440',
-                    clipPath: 'polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%)',
-                }}
-            >
-                {/* Botão para voltar */}
-                <IconButton
-                    onClick={() => navigate('/profile')}
-                    sx={{position: 'absolute', top: 8, left: 8, color: '#f74440'}}
-                >
-                    <ArrowBackIcon/>
-                </IconButton>
+          <ArrowLeft />
+        </IconButton>
 
-                <Typography
-                    sx={{textAlign: 'center', color: '#f74440', fontWeight: 'bold', fontSize: '20px', marginBottom: 2}}>
-                    OPÇÕES DE PARTIDA
-                </Typography>
+        <Typography 
+          className="text-center font-bold text-xl mb-4"
+          style={{ color: '#f74440' }}
+        >
+          OPÇÕES DE PARTIDA
+        </Typography>
 
-                {/* Opções de Tempo */}
-                <Typography sx={{color: '#f74440', fontWeight: 'bold', marginBottom: 1}}>TEMPO:</Typography>
-                <Box sx={{display: 'flex', justifyContent: 'space-between', marginBottom: 2}}>
-                    <Button variant="contained" sx={{backgroundColor: '#f74440', color: '#fff'}}>1MIN</Button>
-                    <Button variant="contained" sx={{backgroundColor: '#ffc94d', color: '#f74440'}}>1:30MIN</Button>
-                </Box>
+        {error && (
+          <div className="mb-4 p-2 bg-red-100 text-red-600 rounded">
+            {error}
+          </div>
+        )}
 
-                {/* Rodadas */}
-                <Typography sx={{color: '#f74440', fontWeight: 'bold', marginBottom: 1}}>RODADAS:</Typography>
-                <Box sx={{display: 'flex', justifyContent: 'space-between', marginBottom: 2}}>
-                    <Button variant="contained" sx={{backgroundColor: '#f74440', color: '#fff'}}>5</Button>
-                    <Button variant="contained" sx={{backgroundColor: '#ffc94d', color: '#f74440'}}>10</Button>
-                </Box>
+        <TextField
+          value={lobbyCode}
+          onChange={(e) => setLobbyCode(e.target.value)}
+          placeholder="Digite o código do lobby"
+          className="w-full mb-4 p-2 border rounded"
+        />
 
-                {/* Número de Jogadores */}
-                <Typography sx={{color: '#f74440', fontWeight: 'bold', marginBottom: 1}}>NÚMERO DE
-                    JOGADORES:</Typography>
-                <Box sx={{display: 'flex', justifyContent: 'space-between', marginBottom: 2}}>
-                    <Button variant="contained" sx={{backgroundColor: '#f74440', color: '#fff'}}>5</Button>
-                    <Button variant="contained" sx={{backgroundColor: '#ffc94d', color: '#f74440'}}>10</Button>
-                </Box>
-
-                {/* Temas */}
-                <Typography sx={{color: '#f74440', fontWeight: 'bold', marginBottom: 1}}>TEMAS:</Typography>
-                <Box sx={{display: 'flex', justifyContent: 'space-between', marginBottom: 2}}>
-                    <Button variant="contained" sx={{backgroundColor: '#f74440', color: '#fff'}}>CEP</Button>
-                    <Button variant="contained" sx={{backgroundColor: '#ffc94d', color: '#f74440'}}>FRUTA</Button>
-                </Box>
-
-                {/* Input para novos temas */}
-                <TextField
-                    placeholder="Insira o tema aqui."
-                    fullWidth
-                    sx={{backgroundColor: '#fff', borderRadius: 1, marginBottom: 2}}
-                />
-
-                {/* Botão para criar partida */}
-                <Button
-                    variant="contained"
-                    fullWidth
-                    sx={{
-                        backgroundColor: '#f74440',
-                        color: '#fff',
-                        fontWeight: 'bold',
-                        marginTop: 2,
-                    }}
-                >
-                    CRIAR
-                </Button>
-
-                <Typography sx={{textAlign: 'center', color: '#f74440', marginTop: 2}}>
-                    CONTA FREE <br/>
-                    <Typography sx={{color: '#f74440'}}>Seja Premium para criar partidas de forma
-                        ilimitada.</Typography>
-                </Typography>
-            </Box>
-        </Box>
-    );
-}
+        <Button
+          onClick={handleJoinLobby}
+          disabled={isLoading}
+          className="w-full py-2 rounded font-bold"
+          style={{
+            backgroundColor: '#f74440',
+            color: '#fff'
+          }}
+        >
+          {isLoading ? 'ENTRANDO...' : 'ENTRAR NO LOBBY'}
+        </Button>
+      </Box>
+    </Box>
+  );
+};
 
 export default GameOptions;
