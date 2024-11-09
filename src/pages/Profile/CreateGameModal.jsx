@@ -1,11 +1,12 @@
 import React, { useState,useEffect } from 'react';
-import { Dialog, DialogContent, Button, TextField, Typography, Chip, IconButton, Box } from '@mui/material';
+import { Dialog, DialogContent, Button, TextField, DialogTitle,Typography, Chip, IconButton, Box, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import {useNavigate} from 'react-router-dom';
 import io from 'socket.io-client';
 import useWebSocket from "../../services/WebSocket.js"
 import WaitingPlayersModal from "./WaitingPlayersModal.jsx"
+import { ArrowBack } from '@mui/icons-material';
 
 function GameOptionsModal({ open, onClose,handleCreateGame,roomCode,game_themes }) {
   const [themes, setThemes] = useState(['CEP', 'FRUTA']);
@@ -77,21 +78,53 @@ useEffect(() => {
 
   return (
     <Box >
- <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" >
-      <DialogContent sx={{ bgcolor: '#FFC44D', p: 3, position: 'relative' }}>
-        {/* Back Button */}
-        <IconButton 
-          onClick={onClose} 
-          sx={{ position: 'absolute', top: 8, left: 8, color: '#f74440' }}>
-          <CloseIcon />
-        </IconButton>
-
-        <Typography variant="h6" align="center" sx={{ color: '#f74440', fontWeight: 'bold', mb: 2 }}>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" PaperProps={{
+                sx: {
+                    borderRadius: '20px',
+                    backgroundColor: '#084080',
+                    border: '10px solid #201E1D',
+                    width: '500px',
+                    height:'400px',
+                    display:'flex',
+                    flexDirection:'column',
+                    justifyContent:'space-around'
+                },
+            }}>
+       <DialogTitle
+                sx={{
+                    textAlign: 'center',
+                    color: '#FFFFFF',
+                    fontWeight: 'bold',
+                    fontSize: '25px',
+                    position: 'relative',
+                    backgroundColor:'#201E1D'
+                }}
+            >
           OPÇÕES DE PARTIDA
-        </Typography>
+
+          <IconButton
+                        aria-label="back"
+                        onClick={onClose}
+                        sx={{
+                            position: 'absolute',
+                            left: 8,
+                            top: 8,
+                            color: '#FFFFFF',
+                            backgroundColor: '#EB2D37',
+                            border: '5px #EB2D37 solid',
+                        }}
+                    >
+                        <ArrowBack />
+                    </IconButton>
+
+        </DialogTitle>
+        <DialogContent sx={{ bgcolor: '#084080', p: 3, position: 'relative' }}>
+
+       
+
 
         {/* Time Selection */}
-        <Typography sx={{ fontWeight: 'bold', mb: 1 }}>TEMPO:</Typography>
+        <Typography sx={{ fontWeight: 'bold', mb: 1,color:'#FFFFFF',marginTop:3 }}>TEMPO POR RODADA:</Typography>
          {/* Botões de seleção de tempo */}
       <Box display="flex" gap={2}>
         <Button
@@ -117,9 +150,10 @@ useEffect(() => {
           1:30 MIN
         </Button>
       </Box>
+      <Divider color='white' sx={{marginTop:2}} ></Divider>
 
         {/* Rounds Selection */}
-        <Typography sx={{ fontWeight: 'bold', mt: 2, mb: 1 }}>RODADAS:</Typography>
+        <Typography sx={{ fontWeight: 'bold', mt: 2, mb: 1 ,color:'#FFFFFF'}}>RODADAS:</Typography>
         <Box display="flex" gap={2}>
         <Button
           variant={selectedRounds === '5' ? 'contained' : 'outlined'}  // Destaque o botão selecionado
@@ -144,6 +178,7 @@ useEffect(() => {
           10
         </Button>
       </Box>
+      <Divider color='white' sx={{marginTop:2}} ></Divider>
 
         {/* Players Selection
         <Typography sx={{ fontWeight: 'bold', mt: 2, mb: 1 }}>NÚMERO DE JOGADORES:</Typography>
@@ -156,7 +191,7 @@ useEffect(() => {
        
 
         {/* Premium Section */}
-        <Typography sx={{ fontSize: '12px', textAlign: 'center', mt: 2 }}>
+        <Typography sx={{ fontSize: '12px', textAlign: 'center',color:'gold', mt: 2 }}>
           SEJA PREMIUM PARA CRIAR PARTIDAS DE FORMA ILIMITADA.
         </Typography>
 
@@ -164,7 +199,7 @@ useEffect(() => {
         <Button
           variant="contained"
           fullWidth
-          sx={{ bgcolor: '#f74440', color: '#fff', mt: 2, fontWeight: 'bold'
+          sx={{ bgcolor: '#201E1D', color: '#fff', mt: 2, fontWeight: 'bold'
         }}
         onClick={() => handleJoinRoom()}
         aria-label={"Criar nova Sala"}

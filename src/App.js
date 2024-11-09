@@ -1,6 +1,6 @@
 // src/App.js
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route,useLocation  } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Home from './pages/home/home.jsx';
 import Login from './pages/Login/Login';
@@ -12,22 +12,37 @@ import GameScreen from './pages/GameScreen/GameScreen';
 import StopScreen from './pages/StopScreen/StopScreen';
 import ValidationScreen from './pages/ValidationScreen/ValidationScreen';
 import WaitingRoom from './pages/WaintingRoom/WaintigRoom'; // Importar a nova página
-
+import UseAnimationToggle from './animations/animation.jsx';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#f74440',
+      main: '#084080',
     },
     secondary: {
-      main: '#ffc94d',
+      main: '#041931',
     },
   },
 });
 
+
 function App() {
   return (
+      <Router>
+          <MainContent />
+      </Router>
+  );
+}
+
+
+function MainContent() {
+  const location = useLocation();
+
+  // Define a rota em que você não quer mostrar a animação
+  const hideAnimationOnRoutes = ['/special'];
+
+  return (
       <ThemeProvider theme={theme}>
-        <Router>
+        {!hideAnimationOnRoutes.includes(location.pathname) && <UseAnimationToggle />}
           <div className="App">
             <Routes>
               <Route path="/" element={<Home />} />
@@ -42,7 +57,6 @@ function App() {
               <Route path="/waiting-room" element={<WaitingRoom />} /> {/* Nova rota */}
             </Routes>
           </div>
-        </Router>
       </ThemeProvider>
   );
 }
