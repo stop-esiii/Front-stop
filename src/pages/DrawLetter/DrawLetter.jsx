@@ -1,10 +1,12 @@
+// src/pages/DrawLetter/DrawLetter.jsx
 import React, { useState, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { Box, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 function DrawLetter() {
   const [letter, setLetter] = useState('');
   const [round, setRound] = useState(1); // Número da rodada
+  const navigate = useNavigate();
 
   // Gerar uma letra aleatória
   const generateRandomLetter = () => {
@@ -13,15 +15,16 @@ function DrawLetter() {
     return alphabet[randomIndex];
   };
 
-  // Receber o estado da rota, caso queira enviar o número de rodadas da tela anterior
-  const location = useLocation();
-  const totalRounds = location.state?.totalRounds || 5;
-
   // Sortear a letra quando o componente é montado
   useEffect(() => {
     const randomLetter = generateRandomLetter();
     setLetter(randomLetter);
   }, []);
+
+  const handleStartGame = () => {
+    // Navegar para a tela do jogo (GameScreen) passando a letra sorteada como estado
+    navigate('/game-screen', { state: { letter } });
+  };
 
   return (
     <Box
@@ -30,22 +33,40 @@ function DrawLetter() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: '#ffc94d',
+        backgroundColor: '#001b33',
+        backgroundImage: 'url(/assets/city-background.png)', // Caminho para a imagem do fundo da cidade
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         flexDirection: 'column',
+        position: 'relative',
       }}
     >
+      {/* Placa de rodada */}
+      <Box
+        component="img"
+        src="/assets/round-plate.png" // Caminho para a imagem da placa de rodada
+        alt="Placa de Rodada"
+        sx={{
+          position: 'absolute',
+          top: '5%', // Ajuste a posição para alinhar no topo
+          width: '180px', // Tamanho da placa
+        }}
+      />
       <Typography
         sx={{
+          position: 'absolute',
+          top: '7%', // Ajuste fino da posição do texto
+          left: 'calc(50% - 30px)', // Centralizar o texto
+          transform: 'translateX(-50%)',
           fontWeight: 'bold',
-          fontSize: '24px',
-          color: '#f74440',
-          textAlign: 'center',
-          marginBottom: 2,
+          fontSize: '18px',
+          color: '#fff',
         }}
       >
-        RODADA {round} / {totalRounds}
+        RODADA {round} / 5
       </Typography>
 
+      {/* Letra sorteada */}
       <Box
         sx={{
           width: 200,
@@ -53,15 +74,32 @@ function DrawLetter() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: '#fff',
-          border: '15px solid #f74440',
+          backgroundColor: '#000',
+          border: '15px solid #333',
+          borderRadius: '50%',
           clipPath: 'polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%)',
+          marginTop: '15%', // Espaço entre a placa e a letra
         }}
       >
-        <Typography sx={{ fontSize: '72px', color: '#f74440', fontWeight: 'bold' }}>
+        <Typography sx={{ fontSize: '72px', color: '#fff', fontWeight: 'bold' }}>
           {letter}
         </Typography>
       </Box>
+
+      {/* Botão para iniciar o jogo */}
+      <Button
+        variant="contained"
+        onClick={handleStartGame} // Função que navega para a tela de GameScreen
+        sx={{
+          marginTop: 3,
+          padding: '10px 20px',
+          backgroundColor: '#f74440',
+          color: '#fff',
+          fontWeight: 'bold',
+        }}
+      >
+        INICIAR JOGO
+      </Button>
     </Box>
   );
 }

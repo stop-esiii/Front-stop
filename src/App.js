@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route,useLocation  } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Home from './pages/home/home.jsx';
+import Home from './pages/Home/Home.jsx';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Profile from './pages/Profile/Profile';
@@ -11,7 +11,8 @@ import DrawLetter from './pages/DrawLetter/DrawLetter';
 import GameScreen from './pages/GameScreen/GameScreen';
 import StopScreen from './pages/StopScreen/StopScreen';
 import ValidationScreen from './pages/ValidationScreen/ValidationScreen';
-import WaitingRoom from './pages/WaintingRoom/WaintigRoom'; // Importar a nova página
+import WaitingRoom from './pages/WaintingRoom/WaintigRoom'; 
+import PodiumScreen from './pages/PodiumScreen/PodiumScreen';
 import UseAnimationToggle from './animations/animation.jsx';
 const theme = createTheme({
   palette: {
@@ -54,7 +55,9 @@ function MainContent() {
               <Route path="/game-screen" element={<GameScreen />} />
               <Route path="/stop" element={<StopScreen />} />
               <Route path="/validation" element={<ValidationScreen />} />
-              <Route path="/waiting-room" element={<WaitingRoom />} /> {/* Nova rota */}
+              <Route path="/waiting-room" element={<WaitingRoom />} /> 
+              <Route path="/podium" element={<PodiumScreen />} />
+
             </Routes>
           </div>
       </ThemeProvider>

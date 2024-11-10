@@ -1,217 +1,114 @@
-
-
-  .cloudanimation{
-    position: absolute;
-    height: 100vh;
-    width: 100vw;
-    animation:  slide 5s linear infinite;; 
-
-  }
-  @keyframes slide {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
-  .cloudanimation::before,
-    .cloudanimation::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-image: inherit;
-      background-repeat: inherit;
-      background-size: inherit;
-    }
-
-    .cloudanimation::before {
-      left: 0;
-    }
-
-    .cloudanimation::after {
-      left: 100%; /* A segunda instância começa imediatamente após a primeira */
-    }
-
-    /* Definição da animação para o movimento suave */
-    @keyframes moveBackgroundCloud {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-100%); /* Move a imagem para a esquerda */
-      }
-    }
-
-  .cloud1{
-    background-image: url('../assets/cloud1.png');
-    height: 10vh;
-    width: 100vw;
-    top: 15vh;
-    left: 2vw;
-    position: absolute;
-    background-repeat: no-repeat;
-    background-size: contain;  
-  }
-  .cloud2{
-    background-image: url('../assets/cloud2.png');
-    height: 10vh;
-    width: 100vw;
-    top: 29vh;
-    left: 22vw;
-    position: absolute;
-    background-repeat: no-repeat;
-    background-size: contain;    
-  }
-  .cloud3{
-    background-image: url('../assets/cloud3.png');
-    height: 6vh;
-    width: 100vw;
-    top: 12vh;
-    left: 62vw;
-    position: absolute;
-    background-repeat: no-repeat;
-    background-size: contain;    
-  }
-
-  .cloud4{
-    background-image: url('../assets/cloud3.png');
-    height: 6vh;
-    width: 100vw;
-    top: 25vh;
-    left: 82vw;
-    position: absolute;
-    background-repeat: no-repeat;
-    background-size: contain;    
-  }
-
-
-  .animationDiv {
-    height: 100vh;
-    width: 100vw;
-    position: absolute;
+/* Ajustes principais para centralizar e alinhar a animação */
+.animationDiv {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  overflow: hidden;
 }
 
-.cityAnimation{
-    position: absolute;
-    height: 100vh;
-    width: 100vw;
-    
-
-  }
-  @keyframes slide {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
-  .city1::before,
-    .city1::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        width: 100vw;
-        height: 100%;
-        background-image: inherit;
-        background-repeat: inherit;
-        background-size: inherit;
-    }
-
-    .city1::before {
-      left: 0;
-    }
-
-    .city1::after {
-      left: 100%; /* A segunda instância começa imediatamente após a primeira */
-    }
-
-    /* Definição da animação para o movimento suave */
-    @keyframes moveBackgroundCloud {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-100%); /* Move a imagem para a esquerda */
-      }
-    }
-
-  .city1{
-    background-image: url('../assets/city1.png');
-    height: 30vh;
-    width: 100vw;
-    bottom: 0;
-    position: absolute;
-    background-repeat: repeat-x;
-    background-size: contain;  
-    animation:  moveBackground 20s linear infinite;
-  }
-
-
-  .city2::before,
-    .city2::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        width: 100vw;
-        height: 100%;
-        background-image: inherit;
-        background-repeat: inherit;
-        background-size: inherit;
-    }
-
-    .city2::before {
-      left: 0;
-    }
-
-    .city2::after {
-      left: 100%; /* A segunda instância começa imediatamente após a primeira */
-    }
-
-    /* Definição da animação para o movimento suave */
-    @keyframes moveBackgroundCloud {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-100%); /* Move a imagem para a esquerda */
-      }
-    }
-
-  .city2{
-    background-image: url('../assets/city2.png');
-    height: 30vh;
-    width: 100vw;
-    bottom: 0;
-    position: absolute;
-    background-repeat: repeat-x;
-    background-size: contain;  
-    animation:  moveBackground 10s linear infinite;
-  }
-
-  @keyframes moveBackground {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-100%); /* Move a imagem para a esquerda */
-    }
+/* Nuvens */
+.cloudanimation {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: moveBackgroundCloud 20s linear infinite;
+  opacity: 0.6;
 }
 
-.paused, .paused::before, .paused::after {
-    animation-play-state: paused;
+.cloud1, .cloud2, .cloud3, .cloud4 {
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
+.cloud1 {
+  background-image: url('../assets/cloud1.png');
+  width: 100vw;
+  height: 10vh;
+  top: 15vh;
+  left: 2vw;
+}
 
+.cloud2 {
+  background-image: url('../assets/cloud2.png');
+  width: 100vw;
+  height: 10vh;
+  top: 29vh;
+  left: 22vw;
+}
 
+.cloud3 {
+  background-image: url('../assets/cloud3.png');
+  width: 100vw;
+  height: 6vh;
+  top: 12vh;
+  left: 62vw;
+}
 
-.trafficlight{
+.cloud4 {
+  background-image: url('../assets/cloud3.png');
+  width: 100vw;
+  height: 6vh;
+  top: 25vh;
+  left: 82vw;
+}
+
+@keyframes moveBackgroundCloud {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Cidade */
+.cityAnimation {
+  position: absolute;
+  bottom: 0;
+  width: 100vw;
+  height: 30vh;
+  display: flex;
+  overflow: hidden;
+  animation: moveBackgroundCity 20s linear infinite;
+}
+
+.city1, .city2 {
+  background-repeat: repeat-x;
+  background-size: contain;
+}
+
+.city1 {
+  background-image: url('../assets/city1.png');
+  width: 100vw;
+  height: 30vh;
+  animation: moveBackgroundCity 20s linear infinite;
+}
+
+.city2 {
+  background-image: url('../assets/city2.png');
+  width: 100vw;
+  height: 30vh;
+  animation: moveBackgroundCity 10s linear infinite;
+}
+
+@keyframes moveBackgroundCity {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Semáforo */
+.trafficlight {
+  position: absolute;
   top: 5vh;
   left: 16.5vw;
-  position: absolute;
   background: #222;
   background-image: linear-gradient(transparent 2%, #111 2%, transparent 3%, #111 30%);
   width: 250px;
@@ -225,138 +122,65 @@
 .trafficlight::after {
   content: '';
   position: absolute;
-  width: 20px;             /* Width of the bar */
-  height: 70px;            /* Height of the bar, adjust as needed */
-  background-color: #333;   /* Color of the bar */
-  top: -35%;                /* Center align bars vertically */
+  width: 20px;
+  height: 70px;
+  background-color: #333;
+  top: -35%;
   transform: translateY(-50%);
-  border-radius: 5px;      /* Rounded edges on bars */
+  border-radius: 5px;
 }
 
 .trafficlight::before {
-  left: 30px;             /* Position bar to the left */
+  left: 30px;
 }
 
 .trafficlight::after {
-  right: 30px;            /* Position bar to the right */
+  right: 30px;
 }
 
-.protector{
-  background: transparent;
-  width: 50px;
-  height: 0;
-  position: absolute;
-  top: 20px;
-  left: -35px;
-  border-right: solid 30px transparent;
-  border-left: solid 30px transparent;
-  border-top: solid 90px #111;
-  border-radius: 10px;
-  z-index: -1;
-}
-
-.protector:nth-child(2){
-  top: 140px;
-}
-
-.protector:nth-child(3){
-  top: 260px;
-}
-
-.traffic-piece1{
-  position: absolute;
-  width: 30px;
-  height: 100px;
-  top: 0px;
-  left: 20%;
-  background-color: #777;
-}
-
-.traffic-piece2{
-  position: absolute;
-  width: 30px;
-  height: 100px;
-  top: 0px;
-  left: 33%;
-  background-color: #777;
-}
-
-.red{
-  background: red;
-  background-size: 5px 5px; 
+.red, .yellow, .green {
   width: 40px;
   height: 5vh;
   border-radius: 50%;
   position: absolute;
   top: 3vh;
+  box-shadow: 0 0 20px #111 inset, 0 0 10px;
+}
+
+.red {
+  background-color: red;
   left: 20px;
-  animation: 13s red infinite;
-  box-shadow: 
-    0 0 20px #111 inset,
-    0 0 10px red;
+  animation: redLight 13s infinite;
 }
 
-.yellow{
-  background: yellow;
-  background-size: 5px 5px;
-  width: 40px;
-  height: 5vh;
-  border-radius: 50%;
-  position: absolute;
-  top: 3vh;
+.yellow {
+  background-color: yellow;
   left: 105px;
-  animation: 13s yellow infinite;
-  box-shadow: 
-    0 0 20px #111 inset,
-    0 0 10px yellow;
+  animation: yellowLight 13s infinite;
 }
 
-.green{
-  background: green;
-  background-size: 5px 5px;
-  width: 40px;
-  height: 5vh;
-  border-radius: 50%;
-  position: absolute;
-  top: 3vh;
+.green {
+  background-color: green;
   left: 190px;
-  box-shadow: 
-    0 0 20px #111 inset,
-    0 0 10px lime;
-  animation: 13s green infinite;
+  animation: greenLight 13s infinite;
 }
 
-
-
-@keyframes red{
-  0%{opacity: 1}
-  20%{opacity: 1}
-  40%{opacity: 1}
-  60%{opacity: .1}
-  80%{opacity: .1}
-  100%{opacity: .1}
+@keyframes redLight {
+  0%, 20%, 40% { opacity: 1; }
+  60%, 80%, 100% { opacity: 0.1; }
 }
 
-@keyframes yellow{
-  0%{opacity: .1}
-  20%{opacity: .1}
-  40%{opacity: 1}
-  50%{opacity: .1}
-  60%{opacity: .1}
-  80%{opacity: .1}
-  100%{opacity: .1}
+@keyframes yellowLight {
+  0%, 20%, 40%, 50%, 60%, 80%, 100% { opacity: 0.1; }
+  40% { opacity: 1; }
 }
 
-@keyframes green{
-  0%{opacity: .1}
-  20%{opacity: .1}
-  40%{opacity: .1}
-  60%{opacity: 1}
-  80%{opacity: 1}
-  83%{opacity: .1}
-  86%{opacity: 1}
-  89%{opacity: .1}
-  93%{opacity: 1}
-  96%{opacity: .1}
-  100%{opacity: 1}
+@keyframes greenLight {
+  0%, 20%, 40%, 83%, 89%, 96%, 100% { opacity: 0.1; }
+  60%, 80%, 86%, 93% { opacity: 1; }
+}
+
+/* Pausa de animação */
+.paused, .paused::before, .paused::after {
+  animation-play-state: paused;
 }

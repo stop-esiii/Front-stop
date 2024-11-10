@@ -1,9 +1,10 @@
+// src/pages/GameScreen/GameScreen.jsx
+
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const themesList = [
-  // Lista de temas fornecida por você
   "Frutas", "Animais", "Cores", "CEP (Cidades, Estados e Países)", "Filmes", "Nomes próprios", "Profissões", "Objetos",
   "Flores", "Times de futebol", "Marcas", "Personagens fictícios", "Comidas", "Atores/Actrizes", "Cantores/Bandas",
   "Celebridades", "Adjetivos", "Programas de TV", "Doenças", "Hobbies", "Super-heróis", "Instrumentos musicais", "Carros",
@@ -55,46 +56,53 @@ function GameScreen() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: '#ffc94d',
+        backgroundColor: '#001b33',
+        backgroundImage: 'url(/assets/city-background.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         flexDirection: 'column',
+        position: 'relative',
       }}
     >
-      <Typography sx={{ fontWeight: 'bold', fontSize: '24px', color: '#f74440', marginBottom: 2 }}>
+      <Typography sx={{ fontWeight: 'bold', fontSize: '24px', color: '#fff', marginBottom: 2 }}>
         LETRA: {letter}
       </Typography>
 
       <Box
         sx={{
-          width: 400,
+          width: 600,
           padding: 3,
           borderRadius: 4,
-          backgroundColor: '#f74440',
-          border: '10px solid #f74440',
+          backgroundColor: '#333',
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: 2,
           textAlign: 'center',
-          clipPath: 'polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%)',
         }}
       >
         {selectedThemes.map((theme, index) => (
           <Box key={index}>
-            <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#ffc94d' }}>{theme}</Typography>
+            <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#fff', marginBottom: 1 }}>
+              {theme}
+            </Typography>
             <TextField
-              placeholder={`Escreva aqui...`}
+              placeholder="Escreva aqui..."
               variant="outlined"
               fullWidth
-              sx={{ backgroundColor: '#fff', borderRadius: 1, marginBottom: 2 }}
+              sx={{
+                backgroundColor: '#fff',
+                borderRadius: 1,
+              }}
             />
           </Box>
         ))}
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 400, marginTop: 2 }}>
-        <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#f74440' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 400, marginTop: 3 }}>
+        <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#fff' }}>
           0 PONTOS {/* Aqui você pode calcular os pontos do jogador */}
         </Typography>
-        <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#f74440' }}>
+        <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#fff' }}>
           TEMPO: {Math.floor(timeLeft / 60)}:{timeLeft % 60 < 10 ? `0${timeLeft % 60}` : timeLeft % 60}
         </Typography>
       </Box>
@@ -106,11 +114,11 @@ function GameScreen() {
           width: 100,
           height: 100,
           borderRadius: '50%',
-          backgroundColor: '#ccc',
+          backgroundColor: '#f74440',
           color: '#fff',
           fontWeight: 'bold',
           fontSize: '18px',
-          marginTop: 2,
+          marginTop: 3,
         }}
       >
         STOP
