@@ -37,8 +37,6 @@ function App() {
 
 function MainContent() {
   const location = useLocation();
-
-  // Define a rota em que você não quer mostrar a animação
   const hideAnimationOnRoutes = ['/special'];
 
   return (
@@ -47,7 +45,7 @@ function MainContent() {
           <div className="App">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
+              <Route path='/login' element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/game-options" element={<GameOptions />} />

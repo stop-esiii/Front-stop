@@ -43,6 +43,7 @@ function GameScreen() {
     return () => clearInterval(timer); // Limpar o intervalo quando o componente for desmontado
   }, [navigate]);
 
+
   const handleStop = () => {
     // Lógica para parar o jogo e processar os resultados
     console.log("Jogo parado");

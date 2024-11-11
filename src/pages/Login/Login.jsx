@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiInputBase-input-MuiOutlinedInput-input": {
       backgroundColor: "#FFFFFF"
-      
     }
   }
 }));
@@ -59,16 +58,9 @@ function Login() {
           username: userInfo.user.username,
           token: response.access_token,
         }));
-        // Redirecionar ou fazer algo após o login
-
-
-
-
         navigate('/profile');
 
       }
-      // Armazena o token no localStorage
-
 
 
 

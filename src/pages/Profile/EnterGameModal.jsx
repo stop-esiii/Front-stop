@@ -55,7 +55,7 @@ function EnterGameModal({open, onClose,roomCode,handleJoinGame}) {
     const roomData = {
       code_lobby:code,
       id_user: userinfo.id,
-      // themes: themes,
+      
     };
     handleJoinGame('enter_lobby',roomData)
     console.log(code)

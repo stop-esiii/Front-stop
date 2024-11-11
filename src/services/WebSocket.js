@@ -27,25 +27,43 @@ const useWebSocket = (url) => {
     });
 
     socketInstance.on('create_lobby', (data) => {
-      console.log('Código da sala recebido:', data.msg);
-      setRoomCode(data.msg); // Atualizar o estado do roomCode
-      setThemes(data.themes)
-      console.log(data)
-    });
-
-    socketInstance.on('enter_lobby', (data) => {
-      console.log('Usuario entrou na sala:', data.time);
-      console.log('Usuario entrou na sala:', data.number_members);
-      console.log('Usuario entrou na sala:', data.themes);
-      console.log(data)
-      alert(data)
+      // console.log('Código da sala recebido:', data.msg);
+      setRoomCode(data.msg);
+      setThemes(data.themes);
       localStorage.setItem('gameInfo', JSON.stringify(
         {
           "time": data.time,
           "rounds": data.rounds,
           "max_members": data.max_members,
           "number_members": data.number_members,
-          "themes": data.themes
+          "themes": data.themes,
+          "users": data.users
+      }
+     
+    ));
+    setGameInfo(prevGameInfo => ({
+      ...prevGameInfo,
+      users: data.users
+    }));
+      console.log(data)
+    });
+    
+
+    socketInstance.on('enter_lobby', (data) => {
+      debugger
+      console.log('Usuario entrou na sala:', data.time);
+      console.log('Usuario entrou na sala:', data.number_members);
+      console.log('Usuario entrou na sala:', data.themes);
+      console.log(data)
+      alert(data)
+      localStorage.setItem('gameInfo', JSON.stringify(
+          {
+            "time": data.time,
+            "rounds": data.rounds,
+            "max_members": data.max_members,
+            "number_members": data.number_members,
+            "themes": data.themes,
+            "users": data.users
         }
       ));
     });
