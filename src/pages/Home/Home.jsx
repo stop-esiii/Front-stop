@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/Station_clock.png';
 import Button from '@mui/material/Button';
 import './Home.css';
-import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric';
+import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric.jsx';
 import UseAnimationToggle from '../../animations/animation.jsx'
 function Home() {
   const navigate = useNavigate();

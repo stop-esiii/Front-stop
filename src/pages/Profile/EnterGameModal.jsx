@@ -60,10 +60,6 @@ function EnterGameModal({open, onClose,roomCode,handleJoinGame}) {
     handleJoinGame('enter_lobby',roomData)
     console.log(code)
     setModalOpen3(true)
-    // if(roomData){
-    //   alert('ok')
-
-    // }
   };
 
 

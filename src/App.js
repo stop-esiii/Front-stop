@@ -13,6 +13,7 @@ import StopScreen from './pages/StopScreen/StopScreen';
 import ValidationScreen from './pages/ValidationScreen/ValidationScreen';
 import WaitingRoom from './pages/WaintingRoom/WaintigRoom'; // Importar a nova página
 import UseAnimationToggle from './animations/animation.jsx';
+import LoadingScreen from './pages/LoadingScreen/loading_screen.jsx';
 const theme = createTheme({
   palette: {
     primary: {
@@ -55,6 +56,7 @@ function MainContent() {
               <Route path="/stop" element={<StopScreen />} />
               <Route path="/validation" element={<ValidationScreen />} />
               <Route path="/waiting-room" element={<WaitingRoom />} /> {/* Nova rota */}
+              <Route path="/loading" element={<LoadingScreen />} />
             </Routes>
           </div>
       </ThemeProvider>

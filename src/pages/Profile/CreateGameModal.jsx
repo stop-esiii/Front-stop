@@ -4,7 +4,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import {useNavigate} from 'react-router-dom';
 import io from 'socket.io-client';
-import useWebSocket from "../../services/WebSocket.js"
 import WaitingPlayersModal from "./WaitingPlayersModal.jsx"
 import { ArrowBack } from '@mui/icons-material';
 
@@ -47,10 +46,10 @@ useEffect(() => {
             max_members: 10,
             // themes: themes,
         };
-        alert("a")
         handleCreateGame('create_lobby',roomData)
         console.log(roomCode)
         if(roomData){
+          onClose()
           setModalOpen3(true)
 
         }

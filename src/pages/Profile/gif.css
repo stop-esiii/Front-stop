@@ -10,10 +10,10 @@
 }
 
 .gif-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-self: center;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin:10px;
 }
 @keyframes gif-play {
     from {
@@ -23,3 +23,50 @@
         transform: translateY(100);
     }
 }
+
+/* Estilo básico para o span */
+.code_span {
+    display: inline-block;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #084080;
+    padding: 10px;
+    border-radius: 5px;
+    animation: shake 0.5s ease-in-out infinite; /* Efeito de tremor */
+  }
+  
+  /* Animação de tremor */
+  @keyframes shake {
+    0% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(5deg);
+    }
+    50% {
+      transform: rotate(-5deg);
+    }
+    75% {
+      transform: rotate(5deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  
+  /* Estilo para o botão de copiar */
+  button {
+    background-color: #EB2D37;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #D93C2E;
+  }
+  

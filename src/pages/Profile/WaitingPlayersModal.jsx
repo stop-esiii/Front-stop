@@ -1,177 +1,184 @@
-import { styled } from '@mui/system';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {Image, StyleSheet} from 'react';
-import loading_gif from './Loading-Stop.gif'
-import './gif.css'
-import React, {useState, useEffect} from 'react';
-import { Dialog, DialogContent,Chip, Typography,DialogTitle, Box, CircularProgress,IconButton} from '@mui/material';
-import {useNavigate} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogContent, Chip,Button, Typography, DialogTitle, Box, IconButton } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
+import WebSocket2 from '../../services/WebSocket';
+import { useNavigate } from 'react-router-dom';
+import loading_gif from './Loading-Stop.gif';
+import './gif.css'
 
-const ModalWrapper = styled(Box)({
-  backgroundColor: '#FFC44D',
-  padding: '20px',
-  width: '400px',
-  textAlign: 'center',
-  position: 'relative',
-});
-
-const PlayerBox = styled(Box)({
-  width: '80px',
-  height: '80px',
-  backgroundColor: '#e94e4e',
-  borderRadius: '50%',
-  margin: '10px auto',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-});
-
-const PlayerGrid = styled(Box)({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(2, 1fr)',
-  gap: '20px',
-  marginTop: '20px',
-});
-
-const BackArrow = styled(Box)({
-  position: 'absolute',
-  top: '10px',
-  left: '10px',
-  fontSize: '20px',
-  cursor: 'pointer',
-});
-
-const LoadingWrapper = styled(Box)({
-  position: 'absolute',
-  top: '10px',
-  right: '10px',
-});
-
-function Themes({gameThemes}){
-    if (gameThemes){
-      return <>
-      {gameThemes.map((theme) => (
-        <Chip
-          key={theme}
-          label={theme}
-          // onDelete={() => handleDeleteTheme(theme)} // Descomente se precisar da funcionalidade de exclusão
-          sx={{ bgcolor: '#ff7043', color: '#fff' }}
-        />
+const Themes = ({ gameThemes }) => {
+  return (
+    <>
+      {gameThemes && gameThemes.map((theme) => (
+        <Chip key={theme} label={theme} sx={{ bgcolor: '#ff7043', color: '#fff' }} />
       ))}
     </>
-    }
-}
-function PLayer2({ isInLobby }) {
-  if (isInLobby===true) {
-    return <PlayerBox>Jogador 2</PlayerBox>
-  }
-}
+  );
+};
 
-function GameModal  ({ open, onClose, gameCode,game_themes }) {
+const PlayerBox = ({ username }) => (
+  <Box sx={{
+    width: '80px',
+    height: '80px',
+    backgroundColor: '#e94e4e',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }}>
+    {username}
+  </Box>
+);
+
+const GameModal = ({ open, onClose, gameCode, game_themes }) => {
+  const { setIsConnected, socket } = WebSocket2('wss://stop-backend.up.railway.app');
   const navigate = useNavigate();
-  const [userinfo,setUserInfo] = useState({});
-  const [gameInfo,setGameInfo] = useState({});
-  const [isInLobby,setIsInLobby]=useState({});
-  const [gameThemes,setGameThemes]=useState({});
-  
+  const [userinfo, setUserInfo] = useState({});
+  const [newPlayer, setNewPlayer] = useState(false);
+  const [gameInfo, setGameInfo] = useState(null);
+  const [isCopied, setIsCopied] = useState(false); // Estado para saber se o texto foi copiado
+
+  const textToCopy = '';
+  // Função para detectar quando um novo jogador entra
+  const handleNewPlayer = () => {
+    setNewPlayer(true);  // Define que um novo jogador entrou
+  };
+
+  const goToGame=()=>{
+    navigate("/loading")
+  }
+
   useEffect(() => {
-      const userCache = JSON.parse(localStorage.getItem('userInfo'));
-      
-      if (userCache && userCache.token) {
-          console.log("Token encontrado");
-          setUserInfo(userCache)
-      } else {
-          navigate("/");
+    const userCache = JSON.parse(localStorage.getItem('userInfo'));
+    if (userCache && userCache.token) {
+      setUserInfo(userCache);
+    } else {
+      navigate('/');
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    const storedGameInfo = localStorage.getItem('gameInfo');
+    if (storedGameInfo) {
+      try {
+        const parsedGameInfo = JSON.parse(storedGameInfo);
+        setGameInfo(parsedGameInfo);
+      } catch (error) {
+        console.error("Erro ao parsear 'gameInfo' do localStorage:", error);
+        setGameInfo(null);
       }
+    }
   }, []);
 
+  // Quando o WebSocket receber um novo jogador, chamar a função handleNewPlayer
   useEffect(() => {
-    const checkGameInfo = () => {
-      const gameCache = JSON.parse(localStorage.getItem('gameInfo'));
-  
-      if (gameCache) {
-        setGameInfo(gameCache);
-        setIsInLobby(true);
-      } else {
-        setIsInLobby(false);
+    if (socket) {
+      socket.on('enter_lobby', goToGame);  // Supondo que o evento seja 'new_player'
+    }
+
+    // Cleanup: remover o listener quando o componente for desmontado
+    return () => {
+      if (socket) {
+        socket.off('enter_lobby', goToGame);
       }
     };
+  }, [socket]);
 
-    checkGameInfo();
-    const intervalId = setInterval(checkGameInfo, 1000);
-    return () => clearInterval(intervalId);
-  }, []);
+  const onBack = () => {
+    const userCache = JSON.parse(localStorage.getItem('userInfo'));
+    setNewPlayer(false);
+    onClose();
+    if (userCache?.host) {
+      setIsConnected(false);
+    }
+    localStorage.removeItem('gameInfo');
+    setNewPlayer(false);
+  };
 
-  
-  
+  const handleCopy = () => {
+    navigator.clipboard.writeText(gameCode)
+      .then(() => {
+        setIsCopied(true); // Alterar o estado para mostrar que o texto foi copiado
+        setTimeout(() => setIsCopied(false), 2000); // Resetar após 2 segundos
+      })
+      .catch(err => console.error('Erro ao copiar: ', err));
+  };
+
+
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" PaperProps={{
+    <Dialog open={open} onClose={onBack} fullWidth maxWidth="sm" PaperProps={{
       sx: {
-          borderRadius: '20px',
-          backgroundColor: '#084080',
-          border: '10px solid #201E1D',
-          width: '500px',
-          height:'400px',
-          display:'flex',
-          flexDirection:'column',
-          justifyContent:'space-around'
+        borderRadius: '20px',
+        backgroundColor: '#084080',
+        border: '10px solid #201E1D',
+        width: '600px',
+        height: '600px',
+        display: 'flex',
+        flexDirection: 'column',
       },
-  }}>
-        <DialogTitle
-              sx={{
-                  textAlign: 'center',
-                  color: '#FFFFFF',
-                  fontWeight: 'bold',
-                  fontSize: '25px',
-                  position: 'relative',
-                  backgroundColor:'#201E1D'
-              }}
-          >
-          <IconButton
-                        aria-label="back"
-                        onClick={onClose}
-                        sx={{
-                            position: 'absolute',
-                            left: 8,
-                            top: 8,
-                            color: '#FFFFFF',
-                            backgroundColor: '#EB2D37',
-                            border: '5px #EB2D37 solid',
-                        }}
-                    >
-                        <ArrowBack />
-                    </IconButton>
-          <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
-            AGUARDANDO JOGADORES
-          </Typography>
+    }}>
+      <DialogTitle sx={{
+        textAlign: 'center', color: '#FFFFFF', fontWeight: 'bold', fontSize: '25px', backgroundColor: '#201E1D'
+      }}>
+        <IconButton
+          aria-label="back"
+          onClick={onBack}
+          sx={{
+            position: 'absolute', left: 8, top: 8, color: '#FFFFFF', backgroundColor: '#EB2D37', border: '5px #EB2D37 solid',
+          }}
+        >
+          <ArrowBack />
+        </IconButton>
+        <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
+          AGUARDANDO JOGADORES
+        </Typography>
+        <div className="gif-container">
+          <img src={loading_gif} alt="loading" className="gif" />
+        </div>
+      </DialogTitle>
 
-          </DialogTitle>
+      <DialogContent sx={{
+        bgcolor: '#084080', p: 3,  display: 'flex', justifyContent:"space-around",flexDirection: 'column', alignItems:"center"
+      }}>
+        <Typography variant="subtitle1" sx={{ color: 'white', marginTop: 3, fontWeight: 'bold' }}>
+          CÓDIGO DE PARTIDA: <span className='code_span' style={{ fontWeight: 'bolder',fontSize:25, color: "gold" }}>{gameCode}
+            
+          </span>
+          <button class="copy-btn" onClick={handleCopy}>Copiar</button>
+        </Typography>
 
-          <DialogContent sx={{ bgcolor: '#084080', p: 3, position: 'relative' ,display:'flex',flexDirection:'column',justifyContent:'center',alignContent:'center'}}>
-          <Typography variant="subtitle1"  sx={{color:'white',marginTop:10,fontWeight:'bold'}}>
-            CÓDIGO DE PARTIDA: <span style={{ fontWeight: 'bold',marginTop:10,color:"white" }}>{gameCode}</span>
-          </Typography>
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontSize:20, color: 'white' }}>
+          TEMAS DA PARTIDA
+        </Typography>
+        <Box display="flex" alignContent="center" alignItems='center' flexWrap="wrap" gap={1} mb={2}>
+          <Themes gameThemes={game_themes} />
+        </Box>
 
-          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: '20px' ,color:'white'}} >
-            TEMAS DA PARTIDA
-          </Typography>
-          <Box display="flex" alignContent="center" flexWrap="wrap" gap={1} mb={2}>
-            <Themes gameThemes={game_themes}></Themes>
-          </Box>
-          
-          <PlayerGrid>
-            <PlayerBox>{userinfo.username}</PlayerBox>
-            <PLayer2 isInLobby={isInLobby}></PLayer2>
-          </PlayerGrid>
-          
+        <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={2}>
+        {newPlayer && gameInfo?.users?.length > 0 ? (
+            // Se newPlayer for verdadeiro e gameInfo.users não estiver vazio, mapeia os usuários
+            gameInfo.users.map((user) => (
+              <PlayerBox key={user.username} username={user.username} />
+            ))
+          ) : (
+            // Caso contrário, apenas renderiza o jogador atual
+            <PlayerBox username={userinfo.username} />
+          )}
+        </Box>
+
+        
+        
+        {/* {gameInfo ?(
+        gameInfo.number_members>1? (
+          <Button onClick={goToGame} sx={{backgroundColor:'red',color:"white"}}>Iniciar Partida</Button>
+        ) : (
           <div className="gif-container">
             <img src={loading_gif} alt="loading" className="gif"></img>
           </div>
+        )):(<div></div>)} */}
 
-          </DialogContent>
-          
-            
+        
+      </DialogContent>
     </Dialog>
   );
 };

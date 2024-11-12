@@ -48,7 +48,6 @@ function Login() {
 
       if (!response.success) {
         const userInfo = await getUserById(response.id_user, response.access_token)
-        alert(response)
 
         localStorage.setItem('userInfo', JSON.stringify({
           id: response.id_user,
@@ -58,6 +57,7 @@ function Login() {
           themes: userInfo.user.themes,
           username: userInfo.user.username,
           token: response.access_token,
+          host:false
         }));
         // Redirecionar ou fazer algo após o login
 
