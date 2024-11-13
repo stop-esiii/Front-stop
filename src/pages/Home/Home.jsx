@@ -1,11 +1,41 @@
 import React, { useState,useRef,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/Station_clock.png';
+import logogif from '../../assets/clock_gif-3.gif'
 import Button from '@mui/material/Button';
 import './Home.css';
 import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric.jsx';
 import UseAnimationToggle from '../../animations/animation.jsx'
+const INITIAL_PAUSE_DURATION = 5000.00;     // Time before animation starts (ms)
+const ANIMATION_CYCLE_DURATION = 3000.00; 
+
 function Home() {
+  const [animationsPaused, setAnimationsPaused] = useState(true);
+  useEffect(() => {
+    let initialPauseTimeout;
+    let animationCycleInterval;
+
+    const initializeAnimation = () => {
+      // Start with initial pause duration
+      initialPauseTimeout = setTimeout(() => {
+        setAnimationsPaused(false);  // Start animation
+
+        // Begin regular on/off cycle
+        animationCycleInterval = setInterval(() => {
+          setAnimationsPaused(prev => !prev);  // Toggle animation state consistently
+        }, ANIMATION_CYCLE_DURATION);
+      }, INITIAL_PAUSE_DURATION);
+    };
+
+    initializeAnimation();
+
+    // Cleanup timeouts and intervals on component unmount
+    return () => {
+      clearTimeout(initialPauseTimeout);
+      clearInterval(animationCycleInterval);
+    };
+  }, [animationsPaused, setAnimationsPaused]);
+
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -17,8 +47,6 @@ function Home() {
     
     <div className="home-container">
       
-     
-     
       
        {/* <div
     className="road"
@@ -28,7 +56,7 @@ function Home() {
    
  
       <div className="logo">
-        <img src={logo} alt="Stop Logo" className="logo-image" />
+        <img className={`logo-image${animationsPaused ? '' : '-anm'}`} src={`${animationsPaused ? logo : logogif}`} alt="Stop Logo" />
       </div>
 
      
