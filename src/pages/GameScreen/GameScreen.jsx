@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
+import DrawLetter from '../DrawLetter/DrawLetter';
+import startCountdown from '../../services/UtilsServices';
 
 const themesList = [
   "Frutas", "Animais", "Cores", "CEP (Cidades, Estados e Países)", "Filmes", "Nomes próprios", "Profissões", "Objetos",
@@ -15,39 +17,42 @@ function GameScreen() {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedThemes, setSelectedThemes] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(60); // Tempo em segundos
+  const [timeLeft, setTimeLeft] = useState(location.state*600||0); // Tempo em segundos
+  const [isDrawLetterOpen, setIsDrawLetterOpen] = useState(true);
+  const [gameInfo, setGameInfo] = useState({});
+  const [round, setRound] = useState(0);
 
-  // Pegar a letra passada da rota anterior
-  const letter = location.state?.letter || "A";
-
-  // Selecionar 8 temas aleatórios da lista
   useEffect(() => {
-    const shuffledThemes = [...themesList].sort(() => 0.5 - Math.random());
-    setSelectedThemes(shuffledThemes.slice(0, 8));
+    const storedGameInfo = JSON.parse(localStorage.getItem('gameInfo'));
+    setGameInfo(storedGameInfo);
   }, []);
 
-  // Contagem regressiva do tempo
+  // Lógica do contador de tempo e rounds
   useEffect(() => {
-    // const timer = setInterval(() => {
-    //   setTimeLeft((prevTime) => {
-    //     if (prevTime > 1) {
-    //       return prevTime - 1;
-    //     } else {
-    //       clearInterval(timer);
-    //       navigate('/stop'); // Redirecionar para a tela "Stop" quando o tempo acabar
-    //       return 0;
-    //     }
-    //   });
-    // }, 1000);
+    console.log(timeLeft)
+    let timer;
 
-    // return () => clearInterval(timer); // Limpar o intervalo quando o componente for desmontado
-  }, [navigate]);
+    if (timeLeft > 0 && !isDrawLetterOpen) {
+      timer = setInterval(() => {
+        setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && round < gameInfo.rounds - 1) {
+      setRound((prevRound) => prevRound + 1);
+      setTimeLeft(parseInt(gameInfo.time));
+      setIsDrawLetterOpen(true);
+    } else if (timeLeft === 0 && round >= gameInfo.rounds - 1) {
+      navigate("/stop");
+    }
 
+    return () => clearInterval(timer);
+  }, [timeLeft, isDrawLetterOpen, gameInfo, round, navigate]);
+
+  const handleDrawLetterClose = () => {
+    setIsDrawLetterOpen(false);
+  };
 
   const handleStop = () => {
-    // Lógica para parar o jogo e processar os resultados
-    console.log("Jogo parado");
-    navigate("/stop"); // Redirecionar para a tela "Stop" ao clicar no botão STOP
+    navigate("/stop");
   };
 
   return (
@@ -57,16 +62,20 @@ function GameScreen() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        width:'100vw',
+        width: '100vw',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         flexDirection: 'column',
         position: 'relative',
-        zIndex:200
+        zIndex: 200
       }}
     >
+      {isDrawLetterOpen && (
+        <DrawLetter onClose={handleDrawLetterClose} />
+      )}
+
       <Typography sx={{ fontWeight: 'bold', fontSize: '24px', color: '#fff', marginBottom: 2 }}>
-        LETRA: {letter}
+        LETRA: {gameInfo.letters ? gameInfo.letters[round] : ""}
       </Typography>
 
       <Box
@@ -81,7 +90,7 @@ function GameScreen() {
           textAlign: 'center',
         }}
       >
-        {selectedThemes.map((theme, index) => (
+        {gameInfo.themes && gameInfo.themes.map((theme, index) => (
           <Box key={index}>
             <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#fff', marginBottom: 1 }}>
               {theme}
@@ -101,10 +110,10 @@ function GameScreen() {
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 400, marginTop: 3 }}>
         <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#fff' }}>
-          0 PONTOS {/* Aqui você pode calcular os pontos do jogador */}
+          RODADA: {round + 1} / {gameInfo.rounds}
         </Typography>
         <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#fff' }}>
-          TEMPO: {Math.floor(timeLeft / 60)}:{timeLeft % 60 < 10 ? `0${timeLeft % 60}` : timeLeft % 60}
+          TEMPO: {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
         </Typography>
       </Box>
 

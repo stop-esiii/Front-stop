@@ -25,31 +25,37 @@ const blurAnimation = keyframes`
   }
 `;
 
-const LetterSlotMachine = ({gameLetters,finalLetter, onAnimationComplete}) => {
+const LetterSlotMachine = ({ finalLetter, onAnimationComplete }) => {
   const [isAnimating, setIsAnimating] = useState(true);
   const [displayedLetters, setDisplayedLetters] = useState([]);
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   // Gera uma sequência aleatória de letras para a animação
   useEffect(() => {
     const letters = [];
-    for (let i = 0; i < 20; i++) {
-      const randomIndex = Math.floor(Math.random() * gameLetters.length);
-      letters.push(gameLetters[randomIndex]);
+    for (let i = 0; i < 27; i++) {
+      const randomIndex = Math.floor(Math.random() * alphabet.length);
+      letters.push(alphabet[randomIndex]);
     }
     // Adiciona a letra final ao fim da sequência
-    letters.push(finalLetter);
     setDisplayedLetters(letters);
 
     // Timer para parar a animação
     const timer = setTimeout(() => {
       setIsAnimating(false);
-      if (onAnimationComplete) {
-        onAnimationComplete();
-      }
-    }, 2000); // 3 segundos de animação
+
+      // Mostra a última letra por mais 5 segundos
+      const endTimer = setTimeout(() => {
+        if (onAnimationComplete) {
+          onAnimationComplete();
+        }
+      }, 5000);
+
+      return () => clearTimeout(endTimer);
+    }, 3000); // 3 segundos para a animação inicial
 
     return () => clearTimeout(timer);
-  }, [finalLetter, onAnimationComplete,gameLetters]);
+  }, [finalLetter, onAnimationComplete]);
 
   return (
     <Box
@@ -88,7 +94,7 @@ const LetterSlotMachine = ({gameLetters,finalLetter, onAnimationComplete}) => {
           display: 'flex',
           flexDirection: 'column',
           animation: isAnimating
-            ? `${scrollAnimation} 5s cubic-bezier(0.4, 0.0, 0.2, 1)`
+            ? `${scrollAnimation} 7s cubic-bezier(0.4, 0.0, 0.2, 1)`
             : 'none',
           animationFillMode: 'forwards',
         }}
@@ -110,7 +116,7 @@ const LetterSlotMachine = ({gameLetters,finalLetter, onAnimationComplete}) => {
               textShadow: '0 0 10px rgba(255,255,255,0.5)',
             }}
           >
-            {letter}
+             {isAnimating ? letter : finalLetter}  {/* Exibe a letra enquanto anima, ou a finalLetter quando a animação acabar */}
           </Typography>
         ))}
       </Box>

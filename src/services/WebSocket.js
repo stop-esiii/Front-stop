@@ -29,7 +29,7 @@ const WebSocket2 = () => {
     };
 
     const handleCreateLobby = (data) => {
-      console.log('Código da sala recebido:', data.code_lobby);
+      console.log('Código da sala recebido:', data.letters);
       setRoomCode(data.code_lobby);
       setThemes(data.themes);
       let userInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
@@ -38,7 +38,7 @@ const WebSocket2 = () => {
     };
 
     const handleEnterLobby = (data) => {
-      console.log('Usuário entrou na sala:', data.time, data.number_members, data.themes);
+      console.log('Usuário entrou na sala:', data.letters, data.number_members, data.themes);
       setLobby(true);
 
       localStorage.setItem('gameInfo', JSON.stringify({
@@ -48,6 +48,7 @@ const WebSocket2 = () => {
         "number_members": data.number_members,
         "themes": data.themes,
         "users": data.users,
+        "letters":data.letters
       }));
     };
 

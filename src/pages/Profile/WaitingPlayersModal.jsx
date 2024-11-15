@@ -44,9 +44,14 @@ const GameModal = ({ open, onClose, gameCode, game_themes }) => {
     setNewPlayer(true);  // Define que um novo jogador entrou
   };
 
-  const goToGame=()=>{
-    navigate("/loading")
-  }
+  const goToGame = async () => {
+    setNewPlayer(true)
+    const game = localStorage.getItem('gameInfo')
+    const parsedGameInfo = JSON.parse(game);
+    setGameInfo(parsedGameInfo);
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    navigate("/loading");
+  };
 
   useEffect(() => {
     const userCache = JSON.parse(localStorage.getItem('userInfo'));
@@ -132,9 +137,12 @@ const GameModal = ({ open, onClose, gameCode, game_themes }) => {
         <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
           AGUARDANDO JOGADORES
         </Typography>
-        <div className="gif-container">
-          <img src={loading_gif} alt="loading" className="gif" />
-        </div>
+        
+        {!newPlayer ? (
+          <div className="gif-container">
+            <img src={loading_gif} alt="loading" className="gif" />
+          </div>
+        ):(<div></div>)}
       </DialogTitle>
 
       <DialogContent sx={{
@@ -155,7 +163,7 @@ const GameModal = ({ open, onClose, gameCode, game_themes }) => {
         </Box>
 
         <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={2}>
-        {newPlayer && gameInfo?.users?.length > 0 ? (
+        {newPlayer ? (
             // Se newPlayer for verdadeiro e gameInfo.users não estiver vazio, mapeia os usuários
             gameInfo.users.map((user) => (
               <PlayerBox key={user.username} username={user.username} />

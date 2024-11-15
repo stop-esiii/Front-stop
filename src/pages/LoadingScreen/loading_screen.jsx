@@ -36,7 +36,7 @@ function LoadingScreen() {
 
     const timer = setTimeout(() => {
       // After 10 seconds, redirect to another screen
-      navigate('/game-screen'); // Adjust this path as needed
+      navigate('/game-screen', { state: { time: parseInt(gameInfo?.time) } }); // Adjust this path as needed
     }, 10000); // 10000ms = 10 seconds
 
     return () => clearTimeout(timer); // Cleanup timeout if the component is unmounted
