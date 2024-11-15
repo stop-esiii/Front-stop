@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DrawLetter from '../DrawLetter/DrawLetter';
 import startCountdown from '../../services/UtilsServices';
 import WebSocket2 from '../../services/WebSocket';
+import StopModal from '../StopModal/stop';
 const themesList = [
   "Frutas", "Animais", "Cores", "CEP (Cidades, Estados e Países)", "Filmes", "Nomes próprios", "Profissões", "Objetos",
   "Flores", "Times de futebol", "Marcas", "Personagens fictícios", "Comidas", "Atores/Actrizes", "Cantores/Bandas",
@@ -21,6 +22,7 @@ function GameScreen() {
   const [selectedThemes, setSelectedThemes] = useState([]);
   const [timeLeft, setTimeLeft] = useState(parseInt(time)); // Tempo em segundos
   const [isDrawLetterOpen, setIsDrawLetterOpen] = useState(true);
+  const [isStopOpen, setIsStopOpen] = useState(false);
   const [gameInfo, setGameInfo] = useState({});
   const [round, setRound] = useState(0);
 
@@ -41,9 +43,10 @@ function GameScreen() {
     } else if (timeLeft === 0 && round < gameInfo.rounds - 1) {
       setRound((prevRound) => prevRound + 1);
       setTimeLeft(time);
+      handleStopOpen()
       setIsDrawLetterOpen(true);
     } else if (timeLeft === 0 && round >= gameInfo.rounds - 1) {
-      navigate("/stop");
+      handleStopOpen()
     }
 
     return () => clearInterval(timer);
@@ -52,6 +55,19 @@ function GameScreen() {
   const handleDrawLetterClose = () => {
     setIsDrawLetterOpen(false);
   };
+
+  const handleStopOpen=()=>{
+    setRound((prevRound) => prevRound + 1);
+    setTimeLeft(time+2)
+    setIsStopOpen(true)
+    if (round >= gameInfo.rounds - 1){
+      navigate('/validation', {state: {letter: 'A', category: 'CEP'}});
+    }
+  }
+  const handleStopClose = () => {
+    setIsStopOpen(false);
+  };
+
 
   const handleStop = () => {
     navigate("/stop");
@@ -76,6 +92,9 @@ function GameScreen() {
         <DrawLetter onClose={handleDrawLetterClose} rounds={round+1} numRounds={gameInfo.rounds} finalLetter= {gameInfo.letters ? gameInfo.letters[round].toUpperCase().replaceAll("'","") : ""}/>
       )}
 
+      {isStopOpen && (
+      <StopModal onClose={handleStopClose} onLastRound={round >= gameInfo.rounds - 1}></StopModal>
+      )}
       <Typography sx={{ fontWeight: 'bold', fontSize: '24px', color: '#fff', marginBottom: 2 }}>
         LETRA: {gameInfo.letters ? gameInfo.letters[round].toUpperCase().replaceAll("'","") : ""}
       </Typography>
@@ -121,7 +140,7 @@ function GameScreen() {
 
       <Button
         variant="contained"
-        onClick={handleStop}
+        onClick={handleStopOpen}
         sx={{
           width: 100,
           height: 100,

@@ -126,6 +126,17 @@ useEffect(() => {
         <Typography sx={{ fontWeight: 'bold', mb: 1,color:'#FFFFFF',marginTop:3 }}>TEMPO POR RODADA:</Typography>
          {/* Botões de seleção de tempo */}
       <Box display="flex" gap={2}>
+      <Button
+          variant={selectedTime === 30 ? 'contained' : 'outlined'}  // Destaque o botão selecionado
+          sx={{
+            bgcolor: selectedTime === 30 ? '#f74440' : 'transparent',  // Cor de fundo condicional
+            color: selectedTime === 30 ? '#fff' : '#f74440',            // Cor do texto condicional
+            borderColor: '#f74440'
+          }}
+          onClick={() => handleTimeSelect(30)}  // Define o tempo selecionado
+        >
+          30 SEG
+        </Button>
         <Button
           variant={selectedTime === 60 ? 'contained' : 'outlined'}  // Destaque o botão selecionado
           sx={{
