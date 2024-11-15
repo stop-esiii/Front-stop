@@ -1,11 +1,19 @@
 .gif{
     width: 7vmin;
-    margin-top: 50px;
+    align-items: center;
     /* animation: gif-play 10s linear infinite;  */
+    align-self: center;
     animation: gif-play 1s steps(10) infinite
 }
 .gif-container:hover .gif {
     animation-duration: 1s; /* Speed up on hover */
+}
+
+.gif-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
 }
 @keyframes gif-play {
     from {
