@@ -28,19 +28,26 @@ function LoadingScreen() {
   );
   // Effect to load game info from localStorage and handle redirection
   useEffect(() => {
+    // Fetch the game info from localStorage
     const storedGameInfo = localStorage.getItem('gameInfo');
-    
+    let test = ''
     if (storedGameInfo) {
-      setGameInfo(JSON.parse(storedGameInfo)); // Parse the stored string to an object
+      // Parse and set the game info in the state
+      const parsedGameInfo = JSON.parse(storedGameInfo);
+      setGameInfo(parsedGameInfo);
+      console.log(parsedGameInfo)
+      test=parsedGameInfo.time
     }
-
+  
+    // Set a timer to navigate after 10 seconds
     const timer = setTimeout(() => {
-      // After 10 seconds, redirect to another screen
-      navigate('/game-screen', { state: { time: parseInt(gameInfo?.time) } }); // Adjust this path as needed
-    }, 10000); // 10000ms = 10 seconds
-
-    return () => clearTimeout(timer); // Cleanup timeout if the component is unmounted
-  }, [navigate]);
+      // Only navigate when gameInfo is available
+        navigate('/game-screen', { state: { time: test } }); // Pass time in location state
+    }, 5000); // 10000ms = 10 seconds
+  
+    // Cleanup the timeout when the component unmounts or when dependencies change
+    return () => clearTimeout(timer);
+  }, [navigate]); // T
 
   return (
     <Box

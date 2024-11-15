@@ -3,9 +3,8 @@ import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LetterSlotMachine from './slotmachine.jsx';
 
-function DrawLetter({ onClose }) {
+function DrawLetter({ onClose,finalLetter,rounds,numRounds }) {
   const [letter, setLetter] = useState('');
-  const [round, setRound] = useState(1);
   const [isSpinning, setIsSpinning] = useState(true);
   const navigate = useNavigate();
 
@@ -48,11 +47,11 @@ function DrawLetter({ onClose }) {
           color: '#fff',
         }}
       >
-        RODADA {round} / 5
+        RODADA {rounds} / {numRounds}
       </Typography>
 
       <LetterSlotMachine
-        finalLetter={"D"}
+        finalLetter={finalLetter}
         onAnimationComplete={handleAnimationComplete}
       />
 

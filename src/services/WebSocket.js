@@ -8,6 +8,7 @@ const WebSocket2 = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [roomCode, setRoomCode] = useState('');
   const [themes, setThemes] = useState([]);
+  const [roundTime,setRoundTime]=useState(0)
   const [gameInfo, setGameInfo] = useState({});
   const [isInLobby, setLobby] = useState(false);
 
@@ -40,7 +41,7 @@ const WebSocket2 = () => {
     const handleEnterLobby = (data) => {
       console.log('Usuário entrou na sala:', data.letters, data.number_members, data.themes);
       setLobby(true);
-
+      setRoundTime(parseInt(data.time))
       localStorage.setItem('gameInfo', JSON.stringify({
         "time": data.time,
         "rounds": data.rounds,
@@ -87,7 +88,7 @@ const WebSocket2 = () => {
   };
 
   // Retornar o socket e outras informações para reutilização
-  return { socket, isConnected, roomCode,themes,sendMessage,handleCreateRoom,handleEnterRoom ,setIsConnected};
+  return { socket, isConnected, roomCode,themes,sendMessage,handleCreateRoom,handleEnterRoom ,setIsConnected,roundTime};
 };
 
 export default WebSocket2;

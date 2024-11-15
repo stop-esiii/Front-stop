@@ -5,7 +5,7 @@ import { Box, Typography, TextField, Button } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DrawLetter from '../DrawLetter/DrawLetter';
 import startCountdown from '../../services/UtilsServices';
-
+import WebSocket2 from '../../services/WebSocket';
 const themesList = [
   "Frutas", "Animais", "Cores", "CEP (Cidades, Estados e Países)", "Filmes", "Nomes próprios", "Profissões", "Objetos",
   "Flores", "Times de futebol", "Marcas", "Personagens fictícios", "Comidas", "Atores/Actrizes", "Cantores/Bandas",
@@ -14,10 +14,12 @@ const themesList = [
 ];
 
 function GameScreen() {
+  const { roundTime } = WebSocket2();
   const location = useLocation();
+  const { time } = location.state|| 0;
   const navigate = useNavigate();
   const [selectedThemes, setSelectedThemes] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(location.state*600||0); // Tempo em segundos
+  const [timeLeft, setTimeLeft] = useState(parseInt(time)); // Tempo em segundos
   const [isDrawLetterOpen, setIsDrawLetterOpen] = useState(true);
   const [gameInfo, setGameInfo] = useState({});
   const [round, setRound] = useState(0);
@@ -38,7 +40,7 @@ function GameScreen() {
       }, 1000);
     } else if (timeLeft === 0 && round < gameInfo.rounds - 1) {
       setRound((prevRound) => prevRound + 1);
-      setTimeLeft(parseInt(gameInfo.time));
+      setTimeLeft(time);
       setIsDrawLetterOpen(true);
     } else if (timeLeft === 0 && round >= gameInfo.rounds - 1) {
       navigate("/stop");
@@ -71,11 +73,11 @@ function GameScreen() {
       }}
     >
       {isDrawLetterOpen && (
-        <DrawLetter onClose={handleDrawLetterClose} />
+        <DrawLetter onClose={handleDrawLetterClose} rounds={round+1} numRounds={gameInfo.rounds} finalLetter= {gameInfo.letters ? gameInfo.letters[round].toUpperCase().replaceAll("'","") : ""}/>
       )}
 
       <Typography sx={{ fontWeight: 'bold', fontSize: '24px', color: '#fff', marginBottom: 2 }}>
-        LETRA: {gameInfo.letters ? gameInfo.letters[round] : ""}
+        LETRA: {gameInfo.letters ? gameInfo.letters[round].toUpperCase().replaceAll("'","") : ""}
       </Typography>
 
       <Box

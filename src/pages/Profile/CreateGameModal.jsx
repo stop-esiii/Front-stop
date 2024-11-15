@@ -10,7 +10,7 @@ import { ArrowBack } from '@mui/icons-material';
 function GameOptionsModal({ open, onClose,handleCreateGame,roomCode,game_themes }) {
   const [themes, setThemes] = useState(['CEP', 'FRUTA']);
   const [newTheme, setNewTheme] = useState('');
-  const [selectedTime, setSelectedTime] = useState('1 MIN'); 
+  const [selectedTime, setSelectedTime] = useState(60); 
   const [selectedRounds, setSelectedRounds] = useState('5'); 
   const [userinfo,setUserInfo] = useState({});
   const navigate = useNavigate();
@@ -127,24 +127,24 @@ useEffect(() => {
          {/* Botões de seleção de tempo */}
       <Box display="flex" gap={2}>
         <Button
-          variant={selectedTime === '1 MIN' ? 'contained' : 'outlined'}  // Destaque o botão selecionado
+          variant={selectedTime === 60 ? 'contained' : 'outlined'}  // Destaque o botão selecionado
           sx={{
-            bgcolor: selectedTime === '1 MIN' ? '#f74440' : 'transparent',  // Cor de fundo condicional
-            color: selectedTime === '1 MIN' ? '#fff' : '#f74440',            // Cor do texto condicional
+            bgcolor: selectedTime === 60 ? '#f74440' : 'transparent',  // Cor de fundo condicional
+            color: selectedTime === 60 ? '#fff' : '#f74440',            // Cor do texto condicional
             borderColor: '#f74440'
           }}
-          onClick={() => handleTimeSelect('1 MIN')}  // Define o tempo selecionado
+          onClick={() => handleTimeSelect(60)}  // Define o tempo selecionado
         >
           1 MIN
         </Button>
         <Button
-          variant={selectedTime === '1:30 MIN' ? 'contained' : 'outlined'}
+          variant={selectedTime === 90 ? 'contained' : 'outlined'}
           sx={{
-            bgcolor: selectedTime === '1:30 MIN' ? '#f74440' : 'transparent',
-            color: selectedTime === '1:30 MIN' ? '#fff' : '#f74440',
+            bgcolor: selectedTime === 90 ? '#f74440' : 'transparent',
+            color: selectedTime === 90 ? '#fff' : '#f74440',
             borderColor: '#f74440'
           }}
-          onClick={() => handleTimeSelect('1:30 MIN')}
+          onClick={() => handleTimeSelect(90)}
         >
           1:30 MIN
         </Button>
