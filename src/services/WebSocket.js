@@ -31,10 +31,12 @@ const WebSocket2 = () => {
 
     const handleCreateLobby = (data) => {
       console.log('Código da sala recebido:', data.letters);
+      console.log(data.code_lobby)
       setRoomCode(data.code_lobby);
       setThemes(data.themes);
       let userInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
       userInfo.host = true;
+      userInfo.roomCode = data.code_lobby
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
     };
 
@@ -94,6 +96,7 @@ const WebSocket2 = () => {
   const handleTriggerStop = (event, data) => { 
      if (socket) {
       socket.emit(event, data);
+      console.log('TESTE')
     }
   }
   

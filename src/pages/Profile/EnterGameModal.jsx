@@ -58,7 +58,9 @@ function EnterGameModal({open, onClose,roomCode,handleJoinGame}) {
       // themes: themes,
     };
     handleJoinGame('enter_lobby',roomData)
-    console.log(code)
+    let userInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
+    userInfo.roomCode = code
+    localStorage.setItem("userInfo", JSON.stringify(userInfo));
     setModalOpen3(true)
   };
 

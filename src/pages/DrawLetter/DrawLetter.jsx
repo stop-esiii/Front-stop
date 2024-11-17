@@ -6,6 +6,7 @@ import LetterSlotMachine from './slotmachine.jsx';
 function DrawLetter({ onClose,finalLetter,rounds,numRounds }) {
   const [letter, setLetter] = useState('');
   const [isSpinning, setIsSpinning] = useState(true);
+  const [numRound,setNumRound]=useState(rounds)
   const navigate = useNavigate();
 
   const generateRandomLetter = () => {
@@ -15,6 +16,7 @@ function DrawLetter({ onClose,finalLetter,rounds,numRounds }) {
   };
 
   useEffect(() => {
+    setNumRound(numRound+1)
     const randomLetter = generateRandomLetter();
     setLetter(randomLetter);
   }, []);
@@ -47,7 +49,7 @@ function DrawLetter({ onClose,finalLetter,rounds,numRounds }) {
           color: '#fff',
         }}
       >
-        RODADA {rounds} / {numRounds}
+        RODADA {numRound} / {numRounds}
       </Typography>
 
       <LetterSlotMachine
