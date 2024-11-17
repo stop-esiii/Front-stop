@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route,useLocation  } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Home from './pages/home/home.jsx';
+import Home from './pages/Home/Home.jsx';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Profile from './pages/Profile/Profile';
