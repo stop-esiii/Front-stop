@@ -8,7 +8,7 @@ const WebSocket2 = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [roomCode, setRoomCode] = useState('');
   const [themes, setThemes] = useState([]);
-  const [roundTime,setRoundTime]=useState(0)
+  const [roundTime, setRoundTime] = useState(0)
   const [gameInfo, setGameInfo] = useState({});
   const [isInLobby, setLobby] = useState(false);
 
@@ -49,7 +49,7 @@ const WebSocket2 = () => {
         "number_members": data.number_members,
         "themes": data.themes,
         "users": data.users,
-        "letters":data.letters
+        "letters": data.letters
       }));
     };
 
@@ -58,6 +58,8 @@ const WebSocket2 = () => {
     socket.on('disconnect', handleDisconnect);
     socket.on('create_lobby', handleCreateLobby);
     socket.on('enter_lobby', handleEnterLobby);
+    socket.on('trigger_stop', handleTriggerStop);
+    socket.on('receive_stop', handleReceiveStop);
 
     // Limpeza dos eventos ao desmontar
     return () => {
@@ -65,6 +67,8 @@ const WebSocket2 = () => {
       socket.off('disconnect', handleDisconnect);
       socket.off('create_lobby', handleCreateLobby);
       socket.off('enter_lobby', handleEnterLobby);
+      socket.off('trigger_stop', handleTriggerStop);
+      socket.off('receive_stop', handleReceiveStop);
     };
   }, []);
 
@@ -87,8 +91,20 @@ const WebSocket2 = () => {
     }
   };
 
+  const handleTriggerStop = (event, data) => { 
+     if (socket) {
+      socket.emit(event, data);
+    }
+  }
+  
+  const handleReceiveStop = (event, data) =>{
+    if (socket) {
+     socket.emit(event, data);
+   }
+ }
+
   // Retornar o socket e outras informações para reutilização
-  return { socket, isConnected, roomCode,themes,sendMessage,handleCreateRoom,handleEnterRoom ,setIsConnected,roundTime};
+  return { socket, isConnected, roomCode, themes, sendMessage, handleCreateRoom, handleReceiveStop,handleEnterRoom, handleTriggerStop, setIsConnected, roundTime };
 };
 
 export default WebSocket2;
