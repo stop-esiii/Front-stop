@@ -88,25 +88,28 @@ const GameScreen = () => {
   };
 
   const handleStopOpen = () => {
-    handleTriggerStop('trigger_stop', {
-      code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
-    });
-  };
-
-  const handleStopListener = () => {
     setRound((prevRound) => prevRound + 1);
     setTimeLeft(time);
     setIsDrawLetterOpen(true);
     setIsStopOpen(true);
     console.log(selectedThemes)
+ 
+    handleTriggerStop('trigger_stop', {
+      code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
+    });
+
     // Receber dados do jogador
     handleReceiveStop('receive_stop', {
       code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
       id_user: JSON.parse(localStorage.getItem('userInfo')).id,
       double_points: false,
       autocomplete: false,
-      receive_payload: {selectedThemes},
+      receive_payload: selectedThemes,
     });
+  };
+
+  const handleStopListener = () => {
+
   };
 
   const handleStopClose = () => {
