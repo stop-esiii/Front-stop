@@ -1,11 +1,11 @@
 // src/pages/PodiumScreen/PodiumScreen.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 function PodiumScreen() {
   const navigate = useNavigate();
-
+  const [gameInfo,setGameInfo]=useState({})
   // Simulando dados dos vencedores
   const players = [
     { name: 'Jogador 1', points: 100, position: 1 },
@@ -14,12 +14,19 @@ function PodiumScreen() {
   ];
 
   const handlePlayAgain = () => {
-    navigate('/game-options'); // Ajuste a rota conforme necessário
+    localStorage.removeItem('gameInfo')
+    navigate('/profile'); // Ajuste a rota conforme necessário
   };
 
   const handleExit = () => {
+    localStorage.clear()
     navigate('/'); // Redireciona para a tela inicial ou para onde preferir
   };
+
+  useEffect(() => {
+    const storedGameInfo = JSON.parse(localStorage.getItem('gameInfo'));
+    setGameInfo(storedGameInfo);
+  }, []);
 
   return (
     <Box
@@ -28,16 +35,16 @@ function PodiumScreen() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: '#001b33',
-        backgroundImage: 'url(/assets/city-background.png)',
+        width:'100vw',
         backgroundSize: 'cover',
         flexDirection: 'column',
       }}
     >
-      {/* Título Pódio */}
-      <Typography sx={{ fontWeight: 'bold', fontSize: '24px', color: '#fff', marginBottom: 3 }}>
-        PÓDIO
-      </Typography>
+
+      {gameInfo.results&&gameInfo.results[0].score===gameInfo.results[1].score? (
+         <Typography sx={{ fontWeight: 'bold', fontSize: '44px', color: '#ffff55', marginBottom: 3 }}>EMPATE</Typography>
+        ):(<div></div>)}
+     
 
       {/* Container do pódio */}
       <Box
@@ -47,17 +54,19 @@ function PodiumScreen() {
           borderRadius: 2,
           backgroundColor: '#0d1b2a',
           border: '5px solid #ff6f61',
-          display: 'grid',
+          display: 'flex',
           gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 3,
+          alignItems:'center',
+          alignSelf:'center',
+          justifyContent:'space-around',
           textAlign: 'center',
         }}
       >
-        {players.map((player, index) => (
-          <Box key={index} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#ff6f61' }}>
-              {player.position}º LUGAR
-            </Typography>
+       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+       {gameInfo.results&&gameInfo.results[0].score!==gameInfo.results[1].score? (
+        <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#ff6f61', marginBottom: 3 }}>1º LUGAR</Typography>
+        ):(<div></div>)}
+           
             <Box
               sx={{
                 width: 60,
@@ -72,13 +81,36 @@ function PodiumScreen() {
               }}
             />
             <Typography sx={{ fontWeight: 'bold', fontSize: '14px', color: '#fff' }}>
-              {player.name}
+            {gameInfo.results ? gameInfo?.results[0].username : ""}
             </Typography>
             <Typography sx={{ fontWeight: 'bold', fontSize: '14px', color: '#fff' }}>
-              {player.points} PONTOS
+            {gameInfo.results ? gameInfo?.results[0].score : ""}
             </Typography>
           </Box>
-        ))}
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {gameInfo.results&&gameInfo.results[0].score!==gameInfo.results[1].score? (
+         <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#ff6f61', marginBottom: 3 }}>2º LUGAR</Typography>
+        ):(<div></div>)}
+            <Box
+              sx={{
+                width: 60,
+                height: 60,
+                borderRadius: '50%',
+                backgroundColor: '#ff6f61',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 1,
+                marginBottom: 1,
+              }}
+            />
+            <Typography sx={{ fontWeight: 'bold', fontSize: '14px', color: '#fff' }}>
+              {gameInfo.results ? gameInfo?.results[1].username : ""}
+            </Typography>
+            <Typography sx={{ fontWeight: 'bold', fontSize: '14px', color: '#fff' }}>
+            {gameInfo.results ? gameInfo?.results[1].score : ""}
+            </Typography>
+          </Box>
       </Box>
 
       {/* Botões para jogar novamente e sair */}

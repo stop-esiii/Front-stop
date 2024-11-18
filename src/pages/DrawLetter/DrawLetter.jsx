@@ -16,7 +16,7 @@ function DrawLetter({ onClose,finalLetter,rounds,numRounds }) {
   };
 
   useEffect(() => {
-    setNumRound(numRound+1)
+    setNumRound(numRound)
     const randomLetter = generateRandomLetter();
     setLetter(randomLetter);
   }, []);
@@ -40,7 +40,7 @@ function DrawLetter({ onClose,finalLetter,rounds,numRounds }) {
         position: 'absolute',
       }}
     >
-      <Typography
+      {/* <Typography
         sx={{
           position: 'absolute',
           top: '7%',
@@ -49,8 +49,8 @@ function DrawLetter({ onClose,finalLetter,rounds,numRounds }) {
           color: '#fff',
         }}
       >
-        RODADA {numRound} / {numRounds}
-      </Typography>
+        RODADA {numRound+1} / {numRounds}
+      </Typography> */}
 
       <LetterSlotMachine
         finalLetter={finalLetter}

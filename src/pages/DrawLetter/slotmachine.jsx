@@ -94,7 +94,7 @@ const LetterSlotMachine = ({ finalLetter, onAnimationComplete }) => {
           display: 'flex',
           flexDirection: 'column',
           animation: isAnimating
-            ? `${scrollAnimation} 7s cubic-bezier(0.4, 0.0, 0.2, 1)`
+            ? `${scrollAnimation} 10s cubic-bezier(0.4, 0.0, 0.2, 1)`
             : 'none',
           animationFillMode: 'forwards',
         }}

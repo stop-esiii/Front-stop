@@ -3,8 +3,10 @@ import { Box, Typography } from '@mui/material';
 import { keyframes } from '@emotion/react';
 import UseAnimationToggle from '../../animations/animation';
 import { useNavigate } from 'react-router-dom';
+import WebSocket2 from '../../services/WebSocket';
 
 function StopModal({ onClose,onLastRound }) {
+  const { handleValidateStop, socket } = WebSocket2();
     const navigate = useNavigate();
   const generateRandomLetter = () => {
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -12,14 +14,14 @@ function StopModal({ onClose,onLastRound }) {
     return alphabet[randomIndex];
   };
   useEffect(() => {
-    if (onLastRound===true){
-        const timer = setTimeout(() => {
-            // Navegar para a tela de validação após 5 segundos
-            navigate('/validation', {state: {letter: 'A', category: 'CEP'}}); // Aqui você pode passar dados reais
-        }, 5000);
+    // if (onLastRound===true){
+    //     const timer = setTimeout(() => {
+    //         // Navegar para a tela de validação após 5 segundos
+    //         navigate('/validation', {state: {letter: 'A', category: 'CEP'}}); // Aqui você pode passar dados reais
+    //     }, 5000);
     
-        return () => clearTimeout(timer); // Limpar o temporizador ao desmontar
-    }
+    //     return () => clearTimeout(timer); // Limpar o temporizador ao desmontar
+    // }
    
 }, [navigate]);
 

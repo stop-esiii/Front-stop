@@ -177,13 +177,13 @@ useEffect(() => {
           5
         </Button>
         <Button
-          variant={selectedRounds === '10' ? 'contained' : 'outlined'}
+          variant={selectedRounds === '1' ? 'contained' : 'outlined'}
           sx={{
-            bgcolor: selectedRounds === '10' ? '#f74440' : 'transparent',
-            color: selectedRounds === '10' ? '#fff' : '#f74440',
+            bgcolor: selectedRounds === '1' ? '#f74440' : 'transparent',
+            color: selectedRounds === '1' ? '#fff' : '#f74440',
             borderColor: '#f74440'
           }}
-          onClick={() => handleRoundsSelect('10')}
+          onClick={() => handleRoundsSelect('1')}
         >
           10
         </Button>

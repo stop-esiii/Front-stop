@@ -10,10 +10,10 @@ import GameOptions from './pages/GameOptions/GameOptions';
 import DrawLetter from './pages/DrawLetter/DrawLetter';
 import GameScreen from './pages/GameScreen/GameScreen';
 import StopScreen from './pages/StopScreen/StopScreen';
-import ValidationScreen from './pages/ValidationScreen/ValidationScreen';
 import WaitingRoom from './pages/WaintingRoom/WaintigRoom'; // Importar a nova página
 import UseAnimationToggle from './animations/animation.jsx';
 import LoadingScreen from './pages/LoadingScreen/loading_screen.jsx';
+import PodiumScreen from './pages/PodiumScreen/PodiumScreen.jsx';
 const theme = createTheme({
   palette: {
     primary: {
@@ -54,9 +54,10 @@ function MainContent() {
               <Route path="/draw-letter" element={<DrawLetter />} />
               <Route path="/game-screen" element={<GameScreen />} />
               <Route path="/stop" element={<StopScreen />} />
-              <Route path="/validation" element={<ValidationScreen />} />
+              {/* <Route path="/validation" element={<ValidationScreen />} /> */}
               <Route path="/waiting-room" element={<WaitingRoom />} /> {/* Nova rota */}
               <Route path="/loading" element={<LoadingScreen />} />
+              <Route path="/results" element={<PodiumScreen />} />
             </Routes>
           </div>
       </ThemeProvider>

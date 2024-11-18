@@ -5,73 +5,69 @@ import DrawLetter from '../DrawLetter/DrawLetter';
 import WebSocket2 from '../../services/WebSocket';
 import StopModal from '../StopModal/stop';
 
-const themesList = [
-  "Frutas", "Animais", "Cores", "CEP (Cidades, Estados e Países)", "Filmes", "Nomes próprios", "Profissões", "Objetos",
-  "Flores", "Times de futebol", "Marcas", "Personagens fictícios", "Comidas", "Atores/Actrizes", "Cantores/Bandas",
-  "Celebridades", "Adjetivos", "Programas de TV", "Doenças", "Hobbies", "Super-heróis", "Instrumentos musicais", "Carros",
-  "Rios", "Línguas", "Esportes", "Partes do corpo", "Bebidas", "Plantas", "Tecnologia"
-];
-
-function GameScreen() {
-  const { roomCode, handleReceiveStop, handleTriggerStop, socket } = WebSocket2();
+const GameScreen = () => {
+  const { roomCode, handleReceiveStop,handleTriggerStop,handleReturnStop, validateStop,socket } = WebSocket2();
   const location = useLocation();
   const { time } = location.state || 0;
   const navigate = useNavigate();
+
   const [selectedThemes, setSelectedThemes] = useState({});
   const [timeLeft, setTimeLeft] = useState(parseInt(time));
   const [isDrawLetterOpen, setIsDrawLetterOpen] = useState(true);
   const [isStopOpen, setIsStopOpen] = useState(false);
   const [gameInfo, setGameInfo] = useState({});
-  const [round, setRound] = useState(0);
+  const [round, setRound] = useState(1);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  // Escutar o evento 'trigger_stop' no WebSocket
+
+  useEffect(()=>{
+    if (round > gameInfo.rounds) {
+      handleReturnStop('return_stop', {
+        code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
+      });
+    };
+  }, [setRound,round,navigate]);
+  // Escutar evento 'trigger_stop' no WebSocket
   useEffect(() => {
     if (socket) {
-      socket.on('trigger_stop',handleStopListener);
+      socket.on('trigger_stop', handleStopListener);
     }
-
-    // Cleanup para remover o listener ao desmontar o componente
     return () => {
       if (socket) {
-        socket.off('trigger_stop');
+        socket.off('trigger_stop',handleStopListener);
       }
     };
   }, [socket]);
 
+  // Validar se todos os temas estão preenchidos
   useEffect(() => {
-    // Validar preenchimento dos campos para habilitar o botão
     const allFilled = Object.values(selectedThemes).every((value) => value?.trim() !== '');
     setIsButtonDisabled(!allFilled);
   }, [selectedThemes]);
 
+  // Obter informações do jogo no início
   useEffect(() => {
     const storedGameInfo = JSON.parse(localStorage.getItem('gameInfo'));
     setGameInfo(storedGameInfo);
   }, []);
 
-  const handlerInputChange = (theme, e) => {
-    setSelectedThemes({ ...selectedThemes, [theme]: e.target.value });
-  };
-
+  // Gerenciar o cronômetro
   useEffect(() => {
+    
     let timer;
-
     if (timeLeft > 0 && !isDrawLetterOpen) {
       timer = setInterval(() => {
         setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
       }, 1000);
-    } else if (timeLeft === 0 && round < gameInfo.rounds - 1) {
-      setRound((prevRound) => prevRound + 1);
-      setTimeLeft(time);
-      handleStopOpen();
-      setIsDrawLetterOpen(true);
-    } else if (timeLeft === 0 && round >= gameInfo.rounds - 1) {
+    } else if (timeLeft === 0) {
       handleStopOpen();
     }
-
     return () => clearInterval(timer);
-  }, [timeLeft, isDrawLetterOpen, gameInfo, round]);
+  }, [timeLeft, isDrawLetterOpen]);
+
+  const handleInputChange = (theme, e) => {
+    setSelectedThemes({ ...selectedThemes, [theme]: e.target.value });
+  };
 
   const handleDrawLetterClose = () => {
     setIsDrawLetterOpen(false);
@@ -81,37 +77,40 @@ function GameScreen() {
     handleTriggerStop('trigger_stop', {
       code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
     });
-
-    // setRound((prevRound) => prevRound + 1);
-    // setTimeLeft(time);
-    // setIsDrawLetterOpen(true);
-
-    // handleReceiveStop('receive_stop', {
-    //   code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
-    //   id_user: JSON.parse(localStorage.getItem('userInfo')).id,
-    //   double_points: false,
-    //   autocomplete: false,
-    //   receive_payload: selectedThemes,
-    // });
-
-    // if (round >= gameInfo.rounds - 1) {
-    //   navigate('/validation', { state: { letter: 'A', category: 'CEP' } });
-    // }
   };
 
   const handleStopListener = () => {
-    setIsStopOpen(true);
     setRound((prevRound) => prevRound + 1);
+    
     setTimeLeft(time);
     setIsDrawLetterOpen(true);
+    setIsStopOpen(true);
     
 
-    if (round >= gameInfo.rounds - 1) {
-      navigate('/validation', { state: { letter: 'A', category: 'CEP' } });
-    }
+    // Receber dados do jogador
+    handleReceiveStop('receive_stop', {
+      code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
+      id_user: JSON.parse(localStorage.getItem('userInfo')).id,
+      double_points: false,
+      autocomplete: false,
+      receive_payload: selectedThemes,
+    });
   };
 
   const handleStopClose = () => {
+    // if(JSON.parse(localStorage.getItem('userInfo')).host===true){
+    //   validateStop('validate_responses', {
+    //     code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
+    //     letra:gameInfo.letters[round-1]
+    //   });
+    // }
+    if(JSON.parse(localStorage.getItem('userInfo')).host===true && (gameInfo.letters)){
+      validateStop('validate_responses', {
+        code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
+        letra:gameInfo.letters[round-2].toUpperCase()
+      });
+    }
+    
     setIsStopOpen(false);
   };
 
@@ -131,15 +130,27 @@ function GameScreen() {
       }}
     >
       {isDrawLetterOpen && (
-        <DrawLetter onClose={handleDrawLetterClose} rounds={round} numRounds={gameInfo.rounds} finalLetter={gameInfo.letters ? gameInfo.letters[round].toUpperCase().replaceAll("'", "") : ""} />
+        <DrawLetter
+        onClose={handleDrawLetterClose}
+        rounds={round}
+        numRounds={gameInfo.rounds}
+        finalLetter={
+          gameInfo.letters && gameInfo.letters[round-1]
+            ? gameInfo.letters[round-1].toUpperCase()
+            : ""
+        }
+      />
+      
       )}
 
       {isStopOpen && (
-        <StopModal onClose={handleStopClose} onLastRound={round >= gameInfo.rounds - 1}></StopModal>
+        <StopModal onClose={handleStopClose} onLastRound={round >= gameInfo.rounds - 1}/>
       )}
-      <Typography sx={{ fontWeight: 'bold', fontSize: '24px', color: '#fff', marginBottom: 2 }}>
-        LETRA: {gameInfo.letters ? gameInfo.letters[round].toUpperCase().replaceAll("'", "") : ""}
-      </Typography>
+
+<Typography sx={{ fontWeight: 'bold', fontSize: '24px', color: '#fff', marginBottom: 2 }}>
+  LETRA: {gameInfo.letters && gameInfo.letters[round-1] ? gameInfo.letters[round-1].toUpperCase() : ""}
+</Typography>
+
 
       <Box
         sx={{
@@ -164,7 +175,7 @@ function GameScreen() {
               fullWidth
               key={theme}
               label={theme}
-              onChange={(e) => { handlerInputChange(theme, e); }}
+              onChange={(e) => handleInputChange(theme, e)}
               sx={{
                 backgroundColor: '#fff',
                 borderRadius: 1,
@@ -176,7 +187,7 @@ function GameScreen() {
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 400, marginTop: 3 }}>
         <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#fff' }}>
-          RODADA: {round + 1} / {gameInfo.rounds}
+          RODADA: {round} / {gameInfo.rounds}
         </Typography>
         <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#fff' }}>
           TEMPO: {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
@@ -202,6 +213,6 @@ function GameScreen() {
       </Button>
     </Box>
   );
-}
+};
 
 export default GameScreen;
