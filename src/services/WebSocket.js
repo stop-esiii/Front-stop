@@ -57,9 +57,13 @@ const WebSocket2 = () => {
     };
 
     const handleValidate=(data)=>{
-      console.log(data)
+      console.log("ENVIADO PARA VALIDAÇÂO")
+    }
+
+    const handleValidatedResultsStop=(data)=>{
       let gameInfo = JSON.parse(localStorage.getItem("gameInfo")) || {};
-      gameInfo.validate_responses = data;
+      gameInfo.validated_responses = data;
+      console.log(data)
       localStorage.setItem("gameInfo", JSON.stringify(gameInfo));
     }
 
@@ -80,6 +84,7 @@ const WebSocket2 = () => {
     socket.on('receive_stop', handleReceiveStop);
     socket.on('return_stop',handleResultsStop);
     socket.on('validate_responses',handleValidate);
+    socket.on('retrieve_validate_responses',handleValidatedResultsStop);
     // Limpeza dos eventos ao desmontar
     return () => {
       socket.off('connect', handleConnect);
@@ -90,6 +95,7 @@ const WebSocket2 = () => {
       socket.off('receive_stop', handleReceiveStop);
       socket.off('return_stop',handleResultsStop);
       socket.off('validate_responses',handleValidate);
+      socket.off('retrieve_validate_responses',handleValidatedResultsStop);
     };
   }, []);
 
@@ -113,6 +119,11 @@ const WebSocket2 = () => {
     }
   };
 
+  const handleValidatedResults=async(event)=>{
+    if (socket) {
+      socket.emit(event)
+    }
+  }
 
   const handleReturnStop = async (event, data) => {
     if (socket) {
@@ -147,13 +158,14 @@ const WebSocket2 = () => {
   }
   
   const handleReceiveStop = (event, data) =>{
+    console.log(data)
     if (socket) {
      socket.emit(event, data);
    }
  }
 
   // Retornar o socket e outras informações para reutilização
-  return { socket, isConnected, roomCode, themes, sendMessage, validateStop,handleReturnStop,handleCreateRoom, handleReceiveStop,handleEnterRoom, handleTriggerStop,setIsConnected, roundTime };
+  return { socket, isConnected, roomCode, themes, sendMessage, validateStop,handleReturnStop,handleCreateRoom, handleReceiveStop,handleEnterRoom, handleTriggerStop,setIsConnected, handleValidatedResults,roundTime };
 };
 
 export default WebSocket2;

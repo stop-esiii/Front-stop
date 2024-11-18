@@ -4,9 +4,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DrawLetter from '../DrawLetter/DrawLetter';
 import WebSocket2 from '../../services/WebSocket';
 import StopModal from '../StopModal/stop';
+import ValidationModal from '../ValidateModal/validate';
 
 const GameScreen = () => {
-  const { roomCode, handleReceiveStop,handleTriggerStop,handleReturnStop, validateStop,socket } = WebSocket2();
+  const { roomCode, handleReceiveStop, handleTriggerStop, handleReturnStop, validateStop, socket } = WebSocket2();
   const location = useLocation();
   const { time } = location.state || 0;
   const navigate = useNavigate();
@@ -14,19 +15,26 @@ const GameScreen = () => {
   const [selectedThemes, setSelectedThemes] = useState({});
   const [timeLeft, setTimeLeft] = useState(parseInt(time));
   const [isDrawLetterOpen, setIsDrawLetterOpen] = useState(true);
+  const [isValidatedOpen, setIsValidatedOpen] = useState(false);
   const [isStopOpen, setIsStopOpen] = useState(false);
   const [gameInfo, setGameInfo] = useState({});
   const [round, setRound] = useState(1);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
+  // Abertura do Modal de Validação
+ 
+  const handleValidatedClose = () => {
+    setIsValidatedOpen(false); // Fechar modal
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     if (round > gameInfo.rounds) {
       handleReturnStop('return_stop', {
         code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
       });
-    };
-  }, [setRound,round,navigate]);
+    }
+  }, [setRound, round, navigate]);
+
   // Escutar evento 'trigger_stop' no WebSocket
   useEffect(() => {
     if (socket) {
@@ -34,7 +42,7 @@ const GameScreen = () => {
     }
     return () => {
       if (socket) {
-        socket.off('trigger_stop',handleStopListener);
+        socket.off('trigger_stop', handleStopListener);
       }
     };
   }, [socket]);
@@ -53,17 +61,23 @@ const GameScreen = () => {
 
   // Gerenciar o cronômetro
   useEffect(() => {
-    
     let timer;
-    if (timeLeft > 0 && !isDrawLetterOpen) {
+  
+    // Só iniciar o cronômetro se o tempo for maior que 0 e nenhum modal importante estiver aberto
+    if (timeLeft > 0 && !isDrawLetterOpen && !isValidatedOpen) {
       timer = setInterval(() => {
         setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
       }, 1000);
-    } else if (timeLeft === 0) {
+    } 
+  
+    // Quando o tempo chegar a 0, disparar o evento de parada
+    if (timeLeft === 0) {
       handleStopOpen();
     }
-    return () => clearInterval(timer);
-  }, [timeLeft, isDrawLetterOpen]);
+  
+    return () => clearInterval(timer); // Limpar o intervalo ao desmontar ou mudar dependências
+  }, [timeLeft, isDrawLetterOpen, isValidatedOpen]);
+  
 
   const handleInputChange = (theme, e) => {
     setSelectedThemes({ ...selectedThemes, [theme]: e.target.value });
@@ -81,39 +95,32 @@ const GameScreen = () => {
 
   const handleStopListener = () => {
     setRound((prevRound) => prevRound + 1);
-    
     setTimeLeft(time);
     setIsDrawLetterOpen(true);
     setIsStopOpen(true);
-    
-
+    console.log(selectedThemes)
     // Receber dados do jogador
     handleReceiveStop('receive_stop', {
       code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
       id_user: JSON.parse(localStorage.getItem('userInfo')).id,
       double_points: false,
       autocomplete: false,
-      receive_payload: selectedThemes,
+      receive_payload: {selectedThemes},
     });
   };
 
   const handleStopClose = () => {
-    // if(JSON.parse(localStorage.getItem('userInfo')).host===true){
-    //   validateStop('validate_responses', {
-    //     code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
-    //     letra:gameInfo.letters[round-1]
-    //   });
-    // }
-    if(JSON.parse(localStorage.getItem('userInfo')).host===true && (gameInfo.letters)){
+    if (JSON.parse(localStorage.getItem('userInfo')).host === true && gameInfo.letters) {
       validateStop('validate_responses', {
         code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
-        letra:gameInfo.letters[round-2].toUpperCase()
+        letra: gameInfo.letters[round - 2].toUpperCase(),
       });
     }
-    
-    setIsStopOpen(false);
+    setIsStopOpen(false); // Fecha StopModal
+    setTimeout(() => setIsValidatedOpen(true), 300); // Abre ValidationModal após um atraso pequeno
+    setTimeout(() => setIsValidatedOpen(false), 20000);
   };
-
+  
   return (
     <Box
       sx={{
@@ -126,30 +133,33 @@ const GameScreen = () => {
         backgroundPosition: 'center',
         flexDirection: 'column',
         position: 'relative',
-        zIndex: 200
+        zIndex: 200,
       }}
     >
       {isDrawLetterOpen && (
         <DrawLetter
-        onClose={handleDrawLetterClose}
-        rounds={round}
-        numRounds={gameInfo.rounds}
-        finalLetter={
-          gameInfo.letters && gameInfo.letters[round-1]
-            ? gameInfo.letters[round-1].toUpperCase()
-            : ""
-        }
-      />
-      
+          onClose={handleDrawLetterClose}
+          rounds={round}
+          numRounds={gameInfo.rounds}
+          finalLetter={
+            gameInfo.letters && gameInfo.letters[round - 1]
+              ? gameInfo.letters[round - 1].toUpperCase()
+              : ""
+          }
+        />
       )}
 
       {isStopOpen && (
-        <StopModal onClose={handleStopClose} onLastRound={round >= gameInfo.rounds - 1}/>
+        <StopModal onClose={handleStopClose} onLastRound={round >= gameInfo.rounds - 1} />
       )}
 
-<Typography sx={{ fontWeight: 'bold', fontSize: '24px', color: '#fff', marginBottom: 2 }}>
-  LETRA: {gameInfo.letters && gameInfo.letters[round-1] ? gameInfo.letters[round-1].toUpperCase() : ""}
-</Typography>
+      {isValidatedOpen && (
+        <ValidationModal open={isValidatedOpen} onClose={isValidatedOpen} round={round - 1} />
+      )}
+
+      <Typography sx={{ fontWeight: 'bold', fontSize: '24px', color: '#fff', marginBottom: 2 }}>
+        LETRA: {gameInfo.letters && gameInfo.letters[round - 1] ? gameInfo.letters[round - 1].toUpperCase() : ""}
+      </Typography>
 
 
       <Box

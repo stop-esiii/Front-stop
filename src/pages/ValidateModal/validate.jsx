@@ -1,9 +1,30 @@
-import React from 'react';
-import { Modal, Box, Typography, Grid } from '@mui/material';
+import { Modal, Box, Typography, Grid, Button } from '@mui/material';
+import WebSocket2 from '../../services/WebSocket';
+import React, { useState, useEffect } from 'react';
 
-function ValidationModal({ open, handleClose, correctWords, incorrectWords, themes }) {
+function ValidationModal({ open, handleClose, round }) {
+  const { roomCode, handleValidatedResults, handlesocket, socket } = WebSocket2();
+  const [gameInfo, setGameInfo] = useState({});
+
+  const setValidatedData = () => {
+    handleValidatedResults('retrieve_validate_responses');
+  };
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('retrieve_validate_responses', setValidatedData);
+      const storedGameInfo = JSON.parse(localStorage.getItem('gameInfo'));
+      setGameInfo(storedGameInfo);
+    }
+    return () => {
+      if (socket) {
+        socket.off('retrieve_validate_responses', setValidatedData);
+      }
+    };
+  }, [socket]);
+
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={open}>
       <Box
         sx={{
           position: 'absolute',
@@ -22,53 +43,39 @@ function ValidationModal({ open, handleClose, correctWords, incorrectWords, them
           Resultado da Validação
         </Typography>
         <Grid container spacing={2}>
-          {themes.map((theme, index) => (
-            <React.Fragment key={index}>
-              <Grid item xs={6}>
-                <Typography sx={{ fontWeight: 'bold', color: '#ffc94d', mb: 1 }}>{theme}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                {correctWords[index] && (
-                  <Box
-                    sx={{
-                      display: 'inline-block',
-                      px: 2,
-                      py: 1,
-                      backgroundColor: '#00a86b', // Verde para certo
-                      color: '#fff',
-                      borderRadius: '5px',
-                      m: 0.5,
-                    }}
-                  >
-                    {correctWords[index]}
-                  </Box>
-                )}
-                {incorrectWords[index] && (
-                  <Box
-                    sx={{
-                      display: 'inline-block',
-                      px: 2,
-                      py: 1,
-                      backgroundColor: '#e63946', // Vermelho para errado
-                      color: '#fff',
-                      borderRadius: '5px',
-                      m: 0.5,
-                    }}
-                  >
-                    {incorrectWords[index]}
-                  </Box>
-                )}
-              </Grid>
-            </React.Fragment>
-          ))}
+          <Grid item xs={6}>
+            <Typography sx={{ fontWeight: 'bold', color: '#ffc94d', mb: 1 }}>
+              {gameInfo?.validate_responses && gameInfo?.validate_responses[round]
+                ? gameInfo?.validate_responses[round].tema
+                : ''}
+            </Typography>
+          </Grid>
         </Grid>
+
         <Box sx={{ mt: 4, textAlign: 'center' }}>
           <Typography sx={{ color: '#ffc94d', fontWeight: 'bold', fontSize: '18px' }}>
-            Total de Palavras Corretas: {correctWords.length}
+            {/* Total de Palavras Corretas: {correctWords.length} */}
           </Typography>
           <Typography sx={{ color: '#e63946', fontWeight: 'bold', fontSize: '18px' }}>
-            Total de Palavras Erradas: {incorrectWords.length}
+            {/* Total de Palavras Erradas: {incorrectWords.length} */}
           </Typography>
+        </Box>
+
+        {/* Botão de Voltar */}
+        <Box sx={{ mt: 3, textAlign: 'center' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleClose}
+            sx={{
+              backgroundColor: '#00a86b', // Verde
+              '&:hover': {
+                backgroundColor: '#008a4f', // Verde mais escuro no hover
+              },
+            }}
+          >
+            Voltar
+          </Button>
         </Box>
       </Box>
     </Modal>
@@ -76,3 +83,5 @@ function ValidationModal({ open, handleClose, correctWords, incorrectWords, them
 }
 
 export default ValidationModal;
+
+
