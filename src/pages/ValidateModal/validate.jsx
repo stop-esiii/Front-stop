@@ -2,7 +2,7 @@ import { Modal, Box, Typography, Grid, Button } from '@mui/material';
 import WebSocket2 from '../../services/WebSocket';
 import React, { useState, useEffect } from 'react';
 
-function ValidationModal({ open, handleClose, round }) {
+function ValidationModal({ open, close, round }) {
   const { roomCode, handleValidatedResults, handlesocket, socket } = WebSocket2();
   const [gameInfo, setGameInfo] = useState({});
 
@@ -39,7 +39,7 @@ function ValidationModal({ open, handleClose, round }) {
   }, [socket]);
 
   return (
-    <Modal open={open}>
+    <Modal open={open} onClose={close}>
       <Box
         sx={{
           position: 'absolute',
@@ -81,7 +81,7 @@ function ValidationModal({ open, handleClose, round }) {
           <Button
             variant="contained"
             color="primary"
-            onClick={handleClose}
+            onClick={close}
             sx={{
               backgroundColor: '#00a86b', // Verde
               '&:hover': {
