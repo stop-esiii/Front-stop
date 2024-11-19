@@ -1,43 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DrawLetter from '../DrawLetter/DrawLetter';
 import WebSocket2 from '../../services/WebSocket';
 import StopModal from '../StopModal/stop';
 import ValidationModal from '../ValidateModal/validate';
+import { useWebSocket } from '../../services/WebSocketContext';
 
 const GameScreen = () => {
-  const { roomCode, handleReceiveStop, handleTriggerStop, handleReturnStop, validateStop, socket } = WebSocket2();
+  const { roomCode, handleReceiveStop, handleTriggerStop, handleReturnStop, validateStop, socket } = useWebSocket()
   const location = useLocation();
-  const { time } = location.state || 0;
+  const { time } = location.state || { time: 0 };  // Definindo um valor padrão de 0 para o tempo
   const navigate = useNavigate();
 
   const [selectedThemes, setSelectedThemes] = useState({});
-  const [timeLeft, setTimeLeft] = useState(parseInt(time));
+  const [timeLeft, setTimeLeft] = useState(parseInt(time) || 0);  // Garantir que o tempo seja um número
   const [isDrawLetterOpen, setIsDrawLetterOpen] = useState(true);
   const [isValidatedOpen, setIsValidatedOpen] = useState(false);
   const [isStopOpen, setIsStopOpen] = useState(false);
   const [gameInfo, setGameInfo] = useState({});
+  const [userInfo, setUserInfo] = useState({});
   const [round, setRound] = useState(1);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   // Abertura do Modal de Validação
-
   const handleValidatedClose = () => {
     setIsValidatedOpen(false); // Fechar modal
   };
+  const selectedThemesRef = useRef(selectedThemes);
 
   useEffect(() => {
+    selectedThemesRef.current = selectedThemes;
+  }, [selectedThemes]);
+  // Atualiza a informação do jogo com os dados do localStorage
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+    setUserInfo(userInfo)
+    const storedGameInfo = JSON.parse(localStorage.getItem('gameInfo')) || {};  // Verifica se há dados no localStorage
+    setGameInfo(storedGameInfo);
+  }, []);
 
-    if (round > gameInfo.rounds) {
-      setTimeLeft(time);
-      setIsStopOpen(true);
-      setIsValidatedOpen(true)
-      handleReturnStop('return_stop', {
-        code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
-      });
-    }
-  }, [setRound, round, navigate]);
+  // Atualiza o round e checa o tempo restante
+  // useEffect(() => {
+  //   if (round > (gameInfo.rounds)) {
+  //     handleReturnStop('return_stop', {
+  //       code_lobby: JSON.parse(localStorage.getItem('userInfo'))?.roomCode,
+  //     });
+  //   }
+  // }, [round, gameInfo.rounds, navigate]);
 
   // Escutar evento 'trigger_stop' no WebSocket
   useEffect(() => {
@@ -51,87 +62,117 @@ const GameScreen = () => {
     };
   }, [socket]);
 
-  // Obter informações do jogo no início
-  useEffect(() => {
-    const storedGameInfo = JSON.parse(localStorage.getItem('gameInfo'));
-    setGameInfo(storedGameInfo);
-  }, []);
-
   // Gerenciar o cronômetro
   useEffect(() => {
     let timer;
 
-    // Só iniciar o cronômetro se o tempo for maior que 0 e nenhum modal importante estiver aberto
     if (timeLeft > 0 && !isDrawLetterOpen && !isValidatedOpen) {
       timer = setInterval(() => {
         setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
       }, 1000);
     }
 
-    // Quando o tempo chegar a 0, disparar o evento de parada
     if (timeLeft === 0) {
-      handleStopOpen();
+      handleStopOpen();  // Aciona a parada quando o tempo chega a 0
     }
 
-    return () => clearInterval(timer); // Limpar o intervalo ao desmontar ou mudar dependências
+    return () => clearInterval(timer); // Limpa o intervalo quando o tempo mudar
   }, [timeLeft, isDrawLetterOpen, isValidatedOpen]);
 
-
+  // Função para atualizar o valor de cada tema selecionado
   const handleInputChange = (theme, e) => {
     setSelectedThemes({ ...selectedThemes, [theme]: e.target.value });
   };
 
+  // Fechar o modal de DrawLetter
   const handleDrawLetterClose = () => {
     setIsDrawLetterOpen(false);
   };
 
+  // Função de parada do jogo
   const handleStopOpen = () => {
-    if (gameInfo.letters) {
-      validateStop('validate_responses', {
-        code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
-        letra: gameInfo.letters[round - 1].toUpperCase(),
-      });
-    }
-    // setTimeLeft(time);
-    // setIsStopOpen(true);
-    console.log(selectedThemes)
+    console.log(selectedThemes);
 
     handleTriggerStop('trigger_stop', {
-      code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
+      code_lobby: JSON.parse(localStorage.getItem('userInfo'))?.roomCode,
     });
-
-    // Receber dados do jogador
-    handleReceiveStop('receive_stop', {
-      code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
-      id_user: JSON.parse(localStorage.getItem('userInfo')).id,
-      double_points: false,
-      autocomplete: false,
-      receive_payload: selectedThemes,
-    });
+   
   };
 
+  // Função que lida com o evento de parada do WebSocket
   const handleStopListener = async () => {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+    const isPlayerOne = userInfo.host === true; // Identificar jogador 1 ou 2
+    const delay = isPlayerOne ? 0 : 500; // Jogador 1 envia imediatamente, jogador 2 após 1 segundo
+    
+    // Capturar temas apenas para este jogador
+    const currentPlayerThemes = { ...selectedThemesRef.current };
+    
+    // Construir payload específico para este jogador
+    const payload = {
+      code_lobby: userInfo.roomCode,
+      id_user: userInfo.id, // Identifica unicamente o jogador
+      double_points: false, // Exemplo: Jogador 1 recebe pontos duplos
+      autocomplete: false, // Exemplo: Jogador 2 pode ter preenchimento automático
+      receive_payload: currentPlayerThemes, // Apenas temas do jogador atual
+    };
+    
+    console.log("Aguardando envio do payload. Delay:", delay);
+    
+    setTimeout(() => {
+      console.log(`Payload enviado no receive_stop para jogador ${userInfo.id}:`, payload);
+      handleReceiveStop('receive_stop', payload);
+    
+      // Incrementar rodada e resetar o cronômetro
+      setTimeLeft(time);
+      setIsStopOpen(true);
+      setIsDrawLetterOpen(true);
+    
+      // Limpar campos de entrada
+      setSelectedThemes({});
+    }, delay); // Aplica o atraso baseado no jogador
 
-    setSelectedThemes({});
-    setRound((prevRound) => prevRound + 1);
-    setTimeLeft(time);
-    setIsStopOpen(true);
-    setIsDrawLetterOpen(true);
-    if (JSON.parse(localStorage.getItem('userInfo')).host === true && gameInfo.letters) {
-      validateStop('validate_responses', {
-        code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
-        letra: gameInfo.letters[round - 1].toUpperCase(),
-      });
-    }
   };
+  
+  
+  
 
+  // Fechar o modal de Stop e abrir o de validação
   const handleStopClose = () => {
     setIsStopOpen(false); // Fecha StopModal
-    setTimeout(() => setIsValidatedOpen(true), 300); // Abre ValidationModal após um atraso pequeno
-    setTimeout(() => setIsValidatedOpen(false), 20000);
+    setTimeout(() => {
+      if(JSON.parse(localStorage.getItem('userInfo')).host===true){
+        console.log("TESTE")
+        validateStop('validate_responses', {
+          code_lobby: JSON.parse(localStorage.getItem('userInfo'))?.roomCode,
+          letra: round > gameInfo.rounds?gameInfo.letters[round - 2].toUpperCase():gameInfo.letters[round - 1].toUpperCase(),
+        });
+        setRound(round+1);
+
+      }
+      else{
+        setRound(round+1);
+
+      }
+     
+      setIsValidatedOpen(true)
+
+    }, 300); // Abre ValidationModal após um pequeno delay
+    setTimeout(() => {
+      setIsValidatedOpen(false); // Fecha o ValidationModal
+    
+      // TODO: VERIFICAR EMIT DO RETURN STOP
+      if (round > gameInfo.rounds) {
+        useWebSocket.handleReturnStop('return_stop', {
+          code_lobby: JSON.parse(localStorage.getItem('userInfo'))?.roomCode,
+        });
+      }
+    }, 30000); // Fecha o modal após 30 segundos
+   
   };
 
   return (
+   
     <Box
       sx={{
         display: 'flex',
@@ -150,17 +191,13 @@ const GameScreen = () => {
         <DrawLetter
           onClose={handleDrawLetterClose}
           rounds={round}
-          numRounds={gameInfo.rounds}
-          finalLetter={
-            gameInfo.letters && gameInfo.letters[round - 1]
-              ? gameInfo.letters[round - 1].toUpperCase()
-              : ""
-          }
+          numRounds={gameInfo.rounds || 0}
+          finalLetter={gameInfo.letters && gameInfo.letters[round - 1] ? gameInfo.letters[round - 1].toUpperCase() : ""}
         />
       )}
 
       {isStopOpen && (
-        <StopModal onClose={handleStopClose} onLastRound={round >= gameInfo.rounds - 1} />
+        <StopModal onClose={handleStopClose} onLastRound={round >= (gameInfo.rounds || 0) - 1} />
       )}
 
       {isValidatedOpen && (
@@ -170,7 +207,6 @@ const GameScreen = () => {
       <Typography sx={{ fontWeight: 'bold', fontSize: '24px', color: '#fff', marginBottom: 2 }}>
         LETRA: {gameInfo.letters && gameInfo.letters[round - 1] ? gameInfo.letters[round - 1].toUpperCase() : ""}
       </Typography>
-
 
       <Box
         sx={{
@@ -194,7 +230,6 @@ const GameScreen = () => {
               variant="outlined"
               fullWidth
               key={theme}
-              label={theme}
               value={selectedThemes[theme] || ""}
               onChange={(e) => handleInputChange(theme, e)}
               sx={{
@@ -208,7 +243,7 @@ const GameScreen = () => {
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 400, marginTop: 3 }}>
         <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#fff' }}>
-          RODADA: {round} / {gameInfo.rounds}
+          RODADA: {round} / {gameInfo.rounds || 0}
         </Typography>
         <Typography sx={{ fontWeight: 'bold', fontSize: '16px', color: '#fff' }}>
           TEMPO: {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
@@ -217,7 +252,7 @@ const GameScreen = () => {
 
       <Button
         variant="contained"
-        disabled={isButtonDisabled}
+        // disabled={isButtonDisabled}
         onClick={handleStopOpen}
         sx={{
           width: 100,
@@ -232,6 +267,7 @@ const GameScreen = () => {
       >
         STOP
       </Button>
+      <audio src="~/assets/tempo-rodada.mp3" autoPlay loop muted={!isPlaying} />
     </Box>
   );
 };

@@ -14,6 +14,7 @@ import WaitingRoom from './pages/WaintingRoom/WaintigRoom'; // Importar a nova p
 import UseAnimationToggle from './animations/animation.jsx';
 import LoadingScreen from './pages/LoadingScreen/loading_screen.jsx';
 import PodiumScreen from './pages/PodiumScreen/PodiumScreen.jsx';
+import { WebSocketProvider } from './services/WebSocketContext.js';
 const theme = createTheme({
   palette: {
     primary: {
@@ -28,9 +29,11 @@ const theme = createTheme({
 
 function App() {
   return (
-    <Router>
-      <MainContent />
-    </Router>
+
+      <Router>
+        <MainContent />
+      </Router>
+   
   );
 }
 
@@ -44,6 +47,8 @@ function MainContent() {
   return (
     <ThemeProvider theme={theme}>
       {!hideAnimationOnRoutes.includes(location.pathname) && <UseAnimationToggle />}
+    <WebSocketProvider>
+
       <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -63,6 +68,8 @@ function MainContent() {
 
 
       </div>
+    </WebSocketProvider>
+
     </ThemeProvider>
   );
   function PrivateRoute({ children }) {

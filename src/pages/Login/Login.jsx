@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiInputBase-input-MuiOutlinedInput-input": {
       backgroundColor: "#FFFFFF"
-      
+
     }
   }
 }));
@@ -57,7 +57,7 @@ function Login() {
           themes: userInfo.user.themes,
           username: userInfo.user.username,
           token: response.access_token,
-          host:false
+          host: false
         }));
         // Redirecionar ou fazer algo após o login
 
@@ -84,7 +84,7 @@ function Login() {
     setShowChangePassword(false); // Inicialmente mostrar recuperação de senha
   };
 
-  const handleBack=()=>{
+  const handleBack = () => {
     navigate("/")
   }
   const handleClose = () => {
@@ -124,14 +124,14 @@ function Login() {
   };
 
   return (
-    
+
     <Box
       sx={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        
+
       }}
     >
       <CardGeneric
@@ -139,10 +139,9 @@ function Login() {
         backEnabled={true}
         title="LOGIN"
         children={
-         
+
           <div>
             <TextField
-              label="E-mail"
               placeholder="Insira seu e-mail aqui."
               className={classes.root}
               fullWidth
@@ -152,12 +151,11 @@ function Login() {
               sx={{
                 marginBottom: 2,
                 '& .MuiOutlinedInput-input': {
-                    backgroundColor: 'rgb(232, 240, 254)'
+                  backgroundColor: 'rgb(232, 240, 254)'
                 }
-            }}
+              }}
             />
             <TextField
-              label="Senha"
               type="password"
               placeholder="Insira sua senha aqui."
               backgroundColor="#FFFF"
@@ -169,15 +167,15 @@ function Login() {
               sx={{
                 marginBottom: 2,
                 '& .MuiOutlinedInput-input': {
-                    backgroundColor: 'rgb(232, 240, 254)'
+                  backgroundColor: 'rgb(232, 240, 254)'
                 }
-            }}
+              }}
             />
 
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
-            
-           
+
+
 
             <Box sx={{ textAlign: 'center', marginTop: 2 }}>
               <p>
@@ -220,12 +218,12 @@ function Login() {
               ENTRAR
             </Button>
 
-      </div>
+          </div>
         }
 
       />
-    
-        
+
+
 
       <ModalGenenric
         open={open}
@@ -262,7 +260,6 @@ function Login() {
         {showChangePassword ? (
           <>
             <TextField
-              label="Nova Senha"
               type="password"
               placeholder="Insira sua nova senha aqui."
               fullWidth
@@ -272,7 +269,6 @@ function Login() {
               sx={{ backgroundColor: '#fff', borderRadius: 1, marginBottom: 2 }}
             />
             <TextField
-              label="Confirmar Senha"
               type="password"
               placeholder="Confirme sua nova senha aqui."
               fullWidth

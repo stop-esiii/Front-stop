@@ -110,7 +110,7 @@ function Home() {
             <p>
             - Os jogadores terão a missão de pensar e escrever palavras de diversas temas, com uma letra sorteada em cada rodada.<br />
             - O primeiro que escrever tudo e clicar em “stop” irá parar a rodada.<br />
-            - Se uma palavras não for repetida, vale 10 pontos, caso contrário vale 5<br />
+            - Se um palavra não for repetida, vale 10 pontos, caso contrário vale 5<br />
             <b>O Vencedor é o jogador que TIVER MAIS PONTOS AO FINAL DO JOGO.</b>
             </p>
             <h3 style={{ color: '#ffc94d', textAlign: 'center' }}>Conta Premium</h3>
