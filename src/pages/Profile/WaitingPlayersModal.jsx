@@ -5,6 +5,7 @@ import WebSocket2 from '../../services/WebSocket';
 import { useNavigate } from 'react-router-dom';
 import loading_gif from './Loading-Stop.gif';
 import './gif.css'
+import { useWebSocket } from '../../services/WebSocketContext';
 
 const Themes = ({ gameThemes }) => {
   return (
@@ -30,8 +31,8 @@ const PlayerBox = ({ username }) => (
   </Box>
 );
 
-const GameModal = ({ open, onClose, gameCode, game_themes }) => {
-  const { setIsConnected, socket } = WebSocket2('wss://stop-backend.up.railway.app');
+const GameModal = ({open, onClose, gameCode, game_themes }) => {
+  const { roomCode, handleCreateRoom,setIsConnected, handleEnterRoom, themes, socket } = useWebSocket(); // Acessando o WebSocket
   const navigate = useNavigate();
   const [userinfo, setUserInfo] = useState({});
   const [newPlayer, setNewPlayer] = useState(false);

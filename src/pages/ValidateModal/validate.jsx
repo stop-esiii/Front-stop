@@ -2,9 +2,10 @@ import { Modal, Box, Typography, Grid, Button, IconButton } from '@mui/material'
 import WebSocket2 from '../../services/WebSocket';
 import React, { useState, useEffect } from 'react';
 import { ArrowForward, ArrowBack } from '@mui/icons-material';
+import { useWebSocket } from '../../services/WebSocketContext';
 
 function ValidationModal({ open, close, round }) {
-  const { roomCode, handleValidatedResults, handlesocket, socket } = WebSocket2();
+  const { roomCode, handleValidatedResults, handlesocket, socket } = useWebSocket()
   const [gameInfo, setGameInfo] = useState({});
   const [currentTab, setCurrentTab] = useState(0); // Controla a aba ativa (0 = Inválidas, 1 = Válidas)
   const [users,setUsers]=useState([])
@@ -12,6 +13,7 @@ function ValidationModal({ open, close, round }) {
 
   // Atualiza gameInfo com as respostas validadas
   const updateGameInfo = (data) => {
+    
     const updatedGameInfo = { 
       ...gameInfo, // Keep the existing properties of gameInfo
       validate_responses: data // Replace the validate_responses with the new data
@@ -39,6 +41,7 @@ function ValidationModal({ open, close, round }) {
   }, [open, close]);
 
   useEffect(() => {
+    gameInfo.validate_responses=[]
     const userCache = JSON.parse(localStorage.getItem('gameInfo'));
     setUsers(userCache.users)
    
@@ -47,7 +50,7 @@ function ValidationModal({ open, close, round }) {
   useEffect(() => {
     const initializeSocketListeners = async () => {
       if (socket) {
-        await socket.on('retrieve_validate_responses', (data) => {
+        await socket.on('validate_responses', (data) => {
           console.log(data); // Verifique os dados recebidos do backend
           updateGameInfo(data);
         });
@@ -63,7 +66,7 @@ function ValidationModal({ open, close, round }) {
     // Limpar os listeners ao desmontar o componente
     return () => {
       if (socket) {
-        socket.off('retrieve_validate_responses');
+        socket.off('validate_responses');
       }
     };
   }, [socket]);

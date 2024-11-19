@@ -5,9 +5,10 @@ import DrawLetter from '../DrawLetter/DrawLetter';
 import WebSocket2 from '../../services/WebSocket';
 import StopModal from '../StopModal/stop';
 import ValidationModal from '../ValidateModal/validate';
+import { useWebSocket } from '../../services/WebSocketContext';
 
 const GameScreen = () => {
-  const { roomCode, handleReceiveStop, handleTriggerStop, handleReturnStop, validateStop, socket } = WebSocket2();
+  const { roomCode, handleReceiveStop, handleTriggerStop, handleReturnStop, validateStop, socket } = useWebSocket()
   const location = useLocation();
   const { time } = location.state || { time: 0 };  // Definindo um valor padrão de 0 para o tempo
   const navigate = useNavigate();
@@ -122,7 +123,6 @@ const GameScreen = () => {
       handleReceiveStop('receive_stop', payload);
     
       // Incrementar rodada e resetar o cronômetro
-      setRound((prevRound) => prevRound + 1);
       setTimeLeft(time);
       setIsStopOpen(true);
       setIsDrawLetterOpen(true);
@@ -141,10 +141,17 @@ const GameScreen = () => {
     setIsStopOpen(false); // Fecha StopModal
     setTimeout(() => {
       if(JSON.parse(localStorage.getItem('userInfo')).host===true){
+        console.log("TESTE")
         validateStop('validate_responses', {
           code_lobby: JSON.parse(localStorage.getItem('userInfo'))?.roomCode,
           letra: round > gameInfo.rounds?gameInfo.letters[round - 2].toUpperCase():gameInfo.letters[round - 1].toUpperCase(),
         });
+        setRound(round+1);
+
+      }
+      else{
+        setRound(round+1);
+
       }
      
       setIsValidatedOpen(true)
@@ -153,8 +160,9 @@ const GameScreen = () => {
     setTimeout(() => {
       setIsValidatedOpen(false); // Fecha o ValidationModal
     
+      // TODO: VERIFICAR EMIT DO RETURN STOP
       if (round > gameInfo.rounds) {
-        handleReturnStop('return_stop', {
+        useWebSocket.handleReturnStop('return_stop', {
           code_lobby: JSON.parse(localStorage.getItem('userInfo'))?.roomCode,
         });
       }

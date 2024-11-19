@@ -3,8 +3,6 @@ import {
   TextField,
   Button,
   Box,
-  Divider,
-  DialogContentText,
   IconButton,
   Typography
 } from '@mui/material';
@@ -13,15 +11,13 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import HelpIcon from '@mui/icons-material/Help';
 import { LogoutOutlined } from '@mui/icons-material';
 import { logOut } from '../../services/Requests.js';
-import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric.jsx';
 import GameOptionsModal from "./CreateGameModal.jsx";
 import EnterGameModal from './EnterGameModal.jsx';
-import WaitingPlayersModal from "./WaitingPlayersModal.jsx";
 import CardGeneric from '../../shared/components/CardGeneric/CardGeneric.jsx';
-import WebSocket2 from '../../services/WebSocket.js'
+import { useWebSocket } from '../../services/WebSocketContext.js';
 
 function Profile() {
-  const { roomCode, handleCreateRoom, handleEnterRoom, themes } = WebSocket2();
+  const { roomCode, handleCreateRoom, handleEnterRoom, themes, socket } = useWebSocket(); // Acessando o WebSocket
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpen2, setModalOpen2] = useState(false);
@@ -38,17 +34,11 @@ function Profile() {
     }
   }, [navigate]);
 
-  const handleCloseModal = () => {
-    setModalOpen(!isModalOpen);  // Fecha o modal
-  };
+  const handleCloseModal = () => setModalOpen(!isModalOpen);
+  const handleCloseModal2 = () => setModalOpen2(!isModalOpen2);
 
-  const handleCloseModal2 = () => {
-    setModalOpen2(!isModalOpen2);  // Fecha o modal
-  };
-
-  const openCreateGame = () => {
-    setModalOpen(true); // Abre o modal de criação de jogo
-  };
+  const openCreateGame = () => setModalOpen(true);
+  const handleJoinRoom = () => setModalOpen2(true);
 
   const logOutUser = async (token) => {
     if (token === null) {
@@ -59,10 +49,6 @@ function Profile() {
     navigate("/");
   };
 
-  const handleJoinRoom = () => {
-    setModalOpen2(true);  // Abre o modal de entrada na sala
-  };
-
   return (
     <Box
       sx={{
@@ -70,7 +56,7 @@ function Profile() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        width: '100vw;'
+        width: '100vw'
       }}
     >
       <CardGeneric
@@ -108,21 +94,6 @@ function Profile() {
               <LogoutOutlined />
             </IconButton>
 
-            <Box
-              sx={{
-                width: 100,
-                height: 100,
-                backgroundColor: '#f74440',
-                borderRadius: '50%',
-                margin: '0 auto',
-                marginBottom: 2,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            >
-              {/* Aqui pode adicionar a imagem do avatar do usuário */}
-            </Box>
-
             <Typography sx={{ textAlign: 'center', color: '#FFFFF', fontWeight: 'bold', marginBottom: 2 }}>
               CONTA FREE <br />
               <Typography sx={{ color: '#f74440', fontWeight: 'bold' }}>SEJA PREMIUM.</Typography>
@@ -158,13 +129,13 @@ function Profile() {
             <GameOptionsModal
               open={isModalOpen}
               onClose={handleCloseModal}
-              handleCreateGame={handleCreateRoom} // Passando handleCreateRoom como prop
+              handleCreateGame={handleCreateRoom}
               roomCode={roomCode}
               game_themes={themes}
             />
             <EnterGameModal
               open={isModalOpen2}
-              handleJoinGame={handleEnterRoom} // Passando handleEnterRoom como prop
+              handleJoinGame={handleEnterRoom}
               roomCode={roomCode}
               onClose={handleCloseModal2}
             />
