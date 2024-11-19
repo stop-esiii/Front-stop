@@ -1,6 +1,6 @@
 // src/App.js
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route,useLocation  } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Home from './pages/Home/Home.jsx';
 import Login from './pages/Login/Login';
@@ -28,9 +28,9 @@ const theme = createTheme({
 
 function App() {
   return (
-      <Router>
-          <MainContent />
-      </Router>
+    <Router>
+      <MainContent />
+    </Router>
   );
 }
 
@@ -42,26 +42,33 @@ function MainContent() {
   const hideAnimationOnRoutes = ['/special'];
 
   return (
-      <ThemeProvider theme={theme}>
-        {!hideAnimationOnRoutes.includes(location.pathname) && <UseAnimationToggle />}
-          <div className="App">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/game-options" element={<GameOptions />} />
-              <Route path="/draw-letter" element={<DrawLetter />} />
-              <Route path="/game-screen" element={<GameScreen />} />
-              <Route path="/stop" element={<StopScreen />} />
-              {/* <Route path="/validation" element={<ValidationScreen />} /> */}
-              <Route path="/waiting-room" element={<WaitingRoom />} /> {/* Nova rota */}
-              <Route path="/loading" element={<LoadingScreen />} />
-              <Route path="/results" element={<PodiumScreen />} />
-            </Routes>
-          </div>
-      </ThemeProvider>
+    <ThemeProvider theme={theme}>
+      {!hideAnimationOnRoutes.includes(location.pathname) && <UseAnimationToggle />}
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+          <Route path="/game-options" element={<GameOptions />} />
+          <Route path="/draw-letter" element={<PrivateRoute><DrawLetter /></PrivateRoute>} />
+          <Route path="/game-screen" element={<PrivateRoute><GameScreen /></PrivateRoute>} />
+          <Route path="/stop" element={<PrivateRoute><StopScreen /></PrivateRoute>} />
+          {/* <Route path="/validation" element={<ValidationScreen />} /> */}
+          <Route path="/waiting-room" element={<PrivateRoute><WaitingRoom /></PrivateRoute>} /> {/* Nova rota */}
+          <Route path="/loading" element={<PrivateRoute><LoadingScreen /></PrivateRoute>} />
+          <Route path="/results" element={<PrivateRoute><PodiumScreen /></PrivateRoute>} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+
+
+      </div>
+    </ThemeProvider>
   );
+  function PrivateRoute({ children }) {
+    const token = localStorage.getItem('userInfo');
+    return token ? children : <Navigate to="/" />;
+  }
 }
 
 export default App;
