@@ -1,4 +1,3 @@
-import { ArrowBack } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
 import {
     Dialog,
@@ -7,10 +6,9 @@ import {
     DialogTitle,
     IconButton,
   } from '@mui/material';
-import { SendToBackIcon } from 'lucide-react';
 
 
-export default function ModalGenenric({ open, handleClose,handleBack,backEnabled, title, children, actions }) {
+export default function ModalGenenric({ open, handleClose, title, children, actions }) {
 
     return (
         <Dialog
@@ -19,48 +17,31 @@ export default function ModalGenenric({ open, handleClose,handleBack,backEnabled
             PaperProps={{
                 sx: {
                     borderRadius: '20px',
-                    backgroundColor: '#084080',
-                    border: '10px solid #201E1D',
-                    width: '500px',
+                    backgroundColor: '#ffc94d',
+                    border: '10px solid #f74440',
+                    width: '300px',
                 },
             }}
         >
             <DialogTitle
                 sx={{
                     textAlign: 'center',
-                    color: '#FFFFFF',
+                    color: '#f74440',
                     fontWeight: 'bold',
-                    fontSize: '25px',
+                    fontSize: '20px',
                     position: 'relative',
-                    backgroundColor:'#201E1D'
                 }}
             >
                 {title}
-                {backEnabled && (
-                    <IconButton
-                        aria-label="back"
-                        onClick={handleBack}
-                        sx={{
-                            position: 'absolute',
-                            left: 8,
-                            top: 8,
-                            color: '#FFFFFF',
-                            backgroundColor: '#EB2D37',
-                            border: '5px #EB2D37 solid',
-                        }}
-                    >
-                        <ArrowBack />
-                    </IconButton>
-                )}
                 <IconButton
                     aria-label="close"
                     onClick={handleClose}
-                    sx={{ position: 'absolute', right: 8, top: 8, color: '#FFFFFF',backgroundColor:'#EB2D37',border:'5px #EB2D37 solid' }}
+                    sx={{ position: 'absolute', right: 8, top: 8, color: '#f74440' }}
                 >
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
-            <DialogContent dividers sx={{ textAlign: 'left', color: '#FFFFFF' }}>
+            <DialogContent dividers sx={{ textAlign: 'center', color: '#f74440' }}>
                 {children}
             </DialogContent>
             {actions && (

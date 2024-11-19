@@ -7,25 +7,12 @@ import {
   DialogContentText,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { loginRequest, getUserById } from '../../services/Requests.js';
+import { loginRequest } from '../../services/Requests.js';
 import './Login.css';
 import ModalGenenric from '../../shared/components/ModalGeneric/ModalGeneric.jsx';
 import ErrorModal from '../../shared/components/ErrorModal/ErrorModal.jsx';
-import UseAnimationToggle from '../../animations/animation.jsx'
-import CardGeneric from '../../shared/components/CardGeneric/CardGeneric.jsx';
-import "./Login.css"
-import { makeStyles } from "@mui/styles";
-const useStyles = makeStyles((theme) => ({
-  root: {
-    "& .MuiInputBase-input-MuiOutlinedInput-input": {
-      backgroundColor: "#FFFFFF"
-      
-    }
-  }
-}));
 
 function Login() {
-  const classes = useStyles();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,7 +26,7 @@ function Login() {
   const [passwordError, setPasswordError] = useState(''); // Estado para erros de senha
   const [isModalOpen, setModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [animationsPaused, setAnimationsPaused] = useState(true);
+
 
   const handleLogin = async () => {
     try {
@@ -47,33 +34,14 @@ function Login() {
       const response = await loginRequest(credentials);
 
       if (!response.success) {
-        const userInfo = await getUserById(response.id_user, response.access_token)
-
-        localStorage.setItem('userInfo', JSON.stringify({
-          id: response.id_user,
-          email: userInfo.user.email,
-          id_type_role: userInfo.user.id_type_role,
-          image: userInfo.user.image,
-          themes: userInfo.user.themes,
-          username: userInfo.user.username,
-          token: response.access_token,
-          host:false
-        }));
-        // Redirecionar ou fazer algo após o login
-
-
-
-
         navigate('/profile');
-
       }
-      // Armazena o token no localStorage
 
-
-
-
+      if (email.trim() !== '' && password.trim() !== '') {
+        setErrorMessage('Preencha todos os campos corretamente.');
+        setModalOpen(true);
+      }
     } catch (error) {
-      console.log(error)
       setErrorMessage('Erro ao fazer login. Verifique suas credenciais.');
       setModalOpen(true);
     }
@@ -84,9 +52,6 @@ function Login() {
     setShowChangePassword(false); // Inicialmente mostrar recuperação de senha
   };
 
-  const handleBack=()=>{
-    navigate("/")
-  }
   const handleClose = () => {
     setOpen(false); // Fechar o Dialog
     setForgotPasswordError('');
@@ -124,108 +89,111 @@ function Login() {
   };
 
   return (
-    
     <Box
       sx={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        
+        backgroundColor: 'var(--primary-color)',
       }}
     >
-      <CardGeneric
-        handleBack={handleBack}
-        backEnabled={true}
-        title="LOGIN"
-        children={
-         
-          <div>
-            <TextField
-              label="E-mail"
-              placeholder="Insira seu e-mail aqui."
-              className={classes.root}
-              fullWidth
-              margin="dense"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              sx={{
-                marginBottom: 2,
-                '& .MuiOutlinedInput-input': {
-                    backgroundColor: 'rgb(232, 240, 254)'
-                }
-            }}
-            />
-            <TextField
-              label="Senha"
-              type="password"
-              placeholder="Insira sua senha aqui."
-              backgroundColor="#FFFF"
-              color='#FFF'
-              fullWidth
-              margin="dense"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              sx={{
-                marginBottom: 2,
-                '& .MuiOutlinedInput-input': {
-                    backgroundColor: 'rgb(232, 240, 254)'
-                }
-            }}
-            />
+      <Box
+        sx={{
+          width: 400,
+          padding: 3,
+          borderRadius: 4,
+          backgroundColor: '#ffc94d',
+          position: 'relative',
+          border: '10px solid #f74440',
+          clipPath: 'polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%)',
+        }}
+      >
+        <Box sx={{ textAlign: 'center', color: 'var(--primary-color)', fontWeight: 'bold', fontSize: '24px', marginBottom: 2 }}>
+          LOGIN
+        </Box>
 
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+        <Button
+          variant="contained"
+          fullWidth
+          sx={{
+            backgroundColor: '#fff',
+            color: 'var(--primary-color)',
+            marginBottom: 2,
+            fontWeight: 'bold',
+          }}
+        >
+          FAZER LOGIN COM GOOGLE
+        </Button>
 
-            
-           
+        <Divider sx={{ marginBottom: 2 }}>
+          <Box sx={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>OU</Box>
+        </Divider>
 
-            <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-              <p>
-                Esqueceu a senha?{' '}
-                <Button
-                  variant="text"
-                  sx={{ color: 'var(--primary-color)', fontWeight: 'bold' }}
-                  onClick={handleForgotPassword}
-                >
-                  Cadastre-se
-                </Button>
-              </p>
-            </Box>
+        <TextField
+          label="E-mail"
+          placeholder="Insira seu e-mail aqui."
+          fullWidth
+          margin="dense"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          label="Senha"
+          type="password"
+          placeholder="Insira sua senha aqui."
+          fullWidth
+          margin="dense"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          sx={{ marginBottom: 2 }}
+        />
 
-            <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-              <p>
-                Não possui login?{' '}
-                <Button
-                  variant="text"
-                  sx={{ color: 'var(--primary-color)', fontWeight: 'bold' }}
-                  onClick={() => navigate('/register')}
-                >
-                  Cadastre-se
-                </Button>
-              </p>
-            </Box>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
+        <Button
+          variant="contained"
+          fullWidth
+          onClick={handleLogin}
+          sx={{
+            backgroundColor: 'var(--primary-color)',
+            color: '#fff',
+            fontWeight: 'bold',
+            fontSize: '16px',
+            marginTop: 2,
+          }}
+        >
+          ENTRAR
+        </Button>
+
+        <Button
+          variant="text"
+          fullWidth
+          onClick={handleForgotPassword}
+          sx={{
+            color: 'var(--primary-color)',
+            fontWeight: 'bold',
+            fontSize: '14px',
+            marginTop: 2,
+          }}
+        >
+          Esqueceu a senha?
+        </Button>
+
+        <Box sx={{ textAlign: 'center', marginTop: 2 }}>
+          <p>
+            Não possui login?{' '}
             <Button
-              variant="contained"
-              fullWidth
-              onClick={handleLogin}
-              sx={{
-                backgroundColor: 'var(--third-color)',
-                color: '#fff',
-                fontWeight: 'bold',
-                fontSize: '16px',
-                marginTop: 2,
-              }}
+              variant="text"
+              sx={{ color: 'var(--primary-color)', fontWeight: 'bold' }}
+              onClick={() => navigate('/register')}
             >
-              ENTRAR
+              Cadastre-se
             </Button>
-
-      </div>
-        }
-
-      />
-    
-        
+          </p>
+        </Box>
+      </Box>
 
       <ModalGenenric
         open={open}
@@ -308,8 +276,6 @@ function Login() {
         onClose={() => setModalOpen(false)}
         errorMessage={errorMessage}
       />
-      {/* <div className={`bg-repeat ${animationsPaused ? 'paused' : ''}`}></div>
-      <div className={`bg-repeat2 ${animationsPaused ? 'paused' : ''}`}></div> */}
     </Box>
   );
 }
