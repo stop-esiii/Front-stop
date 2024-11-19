@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, Chip,Button, Typography, DialogTitle, Box, IconButton } from '@mui/material';
+import { Dialog, DialogContent, Chip, Button, Typography, DialogTitle, Box, IconButton } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import WebSocket2 from '../../services/WebSocket';
 import { useNavigate } from 'react-router-dom';
@@ -111,7 +111,13 @@ const GameModal = ({ open, onClose, gameCode, game_themes }) => {
 
 
   return (
-    <Dialog open={open} onClose={onBack} fullWidth maxWidth="sm" PaperProps={{
+    <Dialog open={open} onClose={(event, reason) => {
+      if (reason === "backdropClick" || reason === "escapeKeyDown") {
+        return;
+      }
+      onBack();
+    }} 
+    fullWidth maxWidth="sm" PaperProps={{
       sx: {
         borderRadius: '20px',
         backgroundColor: '#084080',
@@ -137,25 +143,25 @@ const GameModal = ({ open, onClose, gameCode, game_themes }) => {
         <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
           AGUARDANDO JOGADORES
         </Typography>
-        
+
         {!newPlayer ? (
           <div className="gif-container">
             <img src={loading_gif} alt="loading" className="gif" />
           </div>
-        ):(<div></div>)}
+        ) : (<div></div>)}
       </DialogTitle>
 
       <DialogContent sx={{
-        bgcolor: '#084080', p: 3,  display: 'flex', justifyContent:"space-around",flexDirection: 'column', alignItems:"center"
+        bgcolor: '#084080', p: 3, display: 'flex', justifyContent: "space-around", flexDirection: 'column', alignItems: "center"
       }}>
         <Typography variant="subtitle1" sx={{ color: 'white', marginTop: 3, fontWeight: 'bold' }}>
-          CÓDIGO DE PARTIDA: <span className='code_span' style={{ fontWeight: 'bolder',fontSize:25, color: "gold" }}>{gameCode}
-            
+          CÓDIGO DE PARTIDA: <span className='code_span' style={{ fontWeight: 'bolder', fontSize: 25, color: "gold" }}>{gameCode}
+
           </span>
           <button class="copy-btn" onClick={handleCopy}>Copiar</button>
         </Typography>
 
-        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontSize:20, color: 'white' }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontSize: 20, color: 'white' }}>
           TEMAS DA PARTIDA
         </Typography>
         <Box display="flex" alignContent="center" alignItems='center' flexWrap="wrap" gap={1} mb={2}>
@@ -163,7 +169,7 @@ const GameModal = ({ open, onClose, gameCode, game_themes }) => {
         </Box>
 
         <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={2}>
-        {newPlayer ? (
+          {newPlayer ? (
             // Se newPlayer for verdadeiro e gameInfo.users não estiver vazio, mapeia os usuários
             gameInfo.users.map((user) => (
               <PlayerBox key={user.username} username={user.username} />
@@ -174,8 +180,8 @@ const GameModal = ({ open, onClose, gameCode, game_themes }) => {
           )}
         </Box>
 
-        
-        
+
+
         {/* {gameInfo ?(
         gameInfo.number_members>1? (
           <Button onClick={goToGame} sx={{backgroundColor:'red',color:"white"}}>Iniciar Partida</Button>
@@ -185,7 +191,7 @@ const GameModal = ({ open, onClose, gameCode, game_themes }) => {
           </div>
         )):(<div></div>)} */}
 
-        
+
       </DialogContent>
     </Dialog>
   );

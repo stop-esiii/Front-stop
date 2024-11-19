@@ -220,7 +220,6 @@ const GameScreen = () => {
               variant="outlined"
               fullWidth
               key={theme}
-              label={theme}
               value={selectedThemes[theme] || ""}
               onChange={(e) => handleInputChange(theme, e)}
               sx={{
