@@ -22,6 +22,7 @@ const GameScreen = () => {
   const [userInfo, setUserInfo] = useState({});
   const [round, setRound] = useState(1);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   // Abertura do Modal de Validação
   const handleValidatedClose = () => {
@@ -171,6 +172,7 @@ const GameScreen = () => {
   };
 
   return (
+   
     <Box
       sx={{
         display: 'flex',
@@ -265,6 +267,7 @@ const GameScreen = () => {
       >
         STOP
       </Button>
+      <audio src="~/assets/tempo-rodada.mp3" autoPlay loop muted={!isPlaying} />
     </Box>
   );
 };

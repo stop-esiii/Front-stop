@@ -3,41 +3,42 @@ import WebSocket2 from '../../services/WebSocket';
 import React, { useState, useEffect } from 'react';
 import { ArrowForward, ArrowBack } from '@mui/icons-material';
 import { useWebSocket } from '../../services/WebSocketContext';
+import './validate.css';
 
 function ValidationModal({ open, close, round }) {
   const { roomCode, handleValidatedResults, handlesocket, socket } = useWebSocket()
   const [gameInfo, setGameInfo] = useState({});
-  const [currentTab, setCurrentTab] = useState(0); // Controla a aba ativa (0 = Inválidas, 1 = Válidas)
+  const [currentTab, setCurrentTab] = useState(0); 
   const [users,setUsers]=useState([])
-  const [timer, setTimer] = useState(30); // Timer inicial de 30 segundos
+  const [timer, setTimer] = useState(30); 
 
-  // Atualiza gameInfo com as respostas validadas
+
   const updateGameInfo = (data) => {
     
     const updatedGameInfo = { 
-      ...gameInfo, // Keep the existing properties of gameInfo
-      validate_responses: data // Replace the validate_responses with the new data
+      ...gameInfo, 
+      validate_responses: data 
     };
-    setGameInfo(updatedGameInfo); // Update the state with the modified object
-    localStorage.setItem('gameInfo', JSON.stringify(updatedGameInfo)); // Save the updated gameInfo to localStorage
+    setGameInfo(updatedGameInfo); 
+    localStorage.setItem('gameInfo', JSON.stringify(updatedGameInfo)); 
   };
   
 
-  // Inicializa o timer quando o modal é aberto
+
   useEffect(() => {
     let interval;
     if (open) {
-      // setTimer(30); // Reinicia o timer
+
       interval = setInterval(() => {
         setTimer((prev) => {
           if (prev <= 1) {
-            clearInterval(interval); // Para o timer
+            clearInterval(interval); 
           }
           return prev - 1;
         });
       }, 1000);
     }
-    return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
+    return () => clearInterval(interval); 
   }, [open, close]);
 
   useEffect(() => {
