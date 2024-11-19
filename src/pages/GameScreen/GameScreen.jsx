@@ -28,7 +28,11 @@ const GameScreen = () => {
   };
 
   useEffect(() => {
+    
     if (round > gameInfo.rounds) {
+      setTimeLeft(time);
+      setIsStopOpen(true);
+      setIsValidatedOpen(true)
       handleReturnStop('return_stop', {
         code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
       });
@@ -88,10 +92,14 @@ const GameScreen = () => {
   };
 
   const handleStopOpen = () => {
-    setRound((prevRound) => prevRound + 1);
-    setTimeLeft(time);
-    setIsDrawLetterOpen(true);
-    setIsStopOpen(true);
+    if (gameInfo.letters) {
+      validateStop('validate_responses', {
+        code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
+        letra: gameInfo.letters[round - 1].toUpperCase(),
+      });
+    }
+    // setTimeLeft(time);
+    // setIsStopOpen(true);
     console.log(selectedThemes)
  
     handleTriggerStop('trigger_stop', {
@@ -108,17 +116,20 @@ const GameScreen = () => {
     });
   };
 
-  const handleStopListener = () => {
-
-  };
-
-  const handleStopClose = () => {
+  const handleStopListener = async () => {
+    setRound((prevRound) => prevRound + 1);
+    setTimeLeft(time);
+    setIsStopOpen(true);
+    setIsDrawLetterOpen(true);
     if (JSON.parse(localStorage.getItem('userInfo')).host === true && gameInfo.letters) {
       validateStop('validate_responses', {
         code_lobby: JSON.parse(localStorage.getItem('userInfo')).roomCode,
-        letra: gameInfo.letters[round - 2].toUpperCase(),
+        letra: gameInfo.letters[round - 1].toUpperCase(),
       });
     }
+  };
+
+  const handleStopClose = () => {
     setIsStopOpen(false); // Fecha StopModal
     setTimeout(() => setIsValidatedOpen(true), 300); // Abre ValidationModal após um atraso pequeno
     setTimeout(() => setIsValidatedOpen(false), 20000);

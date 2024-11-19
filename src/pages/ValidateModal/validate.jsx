@@ -6,19 +6,34 @@ function ValidationModal({ open, handleClose, round }) {
   const { roomCode, handleValidatedResults, handlesocket, socket } = WebSocket2();
   const [gameInfo, setGameInfo] = useState({});
 
-  const setValidatedData = () => {
-    handleValidatedResults('retrieve_validate_responses');
+  // Atualiza gameInfo com as respostas validadas
+  const updateGameInfo = (data) => {
+    const updatedGameInfo = { ...gameInfo, validate_responses: data };
+    setGameInfo(updatedGameInfo);
+    localStorage.setItem('gameInfo', JSON.stringify(updatedGameInfo));
   };
 
+  // Listener para o evento do WebSocket
   useEffect(() => {
-    if (socket) {
-      socket.on('retrieve_validate_responses', setValidatedData);
-      const storedGameInfo = JSON.parse(localStorage.getItem('gameInfo'));
-      setGameInfo(storedGameInfo);
-    }
+    const initializeSocketListeners = async () => {
+      if (socket) {
+        await socket.on('retrieve_validate_responses', (data) => {
+          console.log(data)
+          updateGameInfo(data);
+        });
+
+        // Carregar informações armazenadas no localStorage
+        const storedGameInfo = JSON.parse(localStorage.getItem('gameInfo')) || {};
+        setGameInfo(storedGameInfo);
+      }
+    };
+
+    initializeSocketListeners();
+
+    // Limpar os listeners ao desmontar o componente
     return () => {
       if (socket) {
-        socket.off('retrieve_validate_responses', setValidatedData);
+        socket.off('retrieve_validate_responses');
       }
     };
   }, [socket]);
@@ -43,13 +58,13 @@ function ValidationModal({ open, handleClose, round }) {
           Resultado da Validação
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography sx={{ fontWeight: 'bold', color: '#ffc94d', mb: 1 }}>
-              {gameInfo?.validate_responses && gameInfo?.validate_responses[round]
-                ? gameInfo?.validate_responses[round].tema
-                : ''}
-            </Typography>
-          </Grid>
+          {gameInfo?.validate_responses?.map((response, index) => (
+            <Grid item xs={6} key={index}>
+              <Typography sx={{ fontWeight: 'bold', color: '#ffc94d', mb: 1 }}>
+                {response?.tema || "Nenhum tema disponível"} : {response?.palavras_invalidas || ""}
+              </Typography>
+            </Grid>
+          ))}
         </Grid>
 
         <Box sx={{ mt: 4, textAlign: 'center' }}>
@@ -83,5 +98,3 @@ function ValidationModal({ open, handleClose, round }) {
 }
 
 export default ValidationModal;
-
-

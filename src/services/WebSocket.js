@@ -60,13 +60,20 @@ const WebSocket2 = () => {
       console.log("ENVIADO PARA VALIDAÇÂO")
     }
 
-    const handleValidatedResultsStop=(data)=>{
-      let gameInfo = JSON.parse(localStorage.getItem("gameInfo")) || {};
-      gameInfo.validated_responses = data;
-      console.log(data)
-      localStorage.setItem("gameInfo", JSON.stringify(gameInfo));
-    }
-
+    const handleValidatedResultsStop = (data) => {
+      // Obter os dados existentes do localStorage
+      // let gameInfo = JSON.parse(localStorage.getItem("gameInfo")) || {};
+  
+      // // Criar um novo objeto com o operador de espalhamento
+      // gameInfo = { ...gameInfo, validate_responses: data };
+  
+      // // Log dos dados recebidos para depuração
+      // console.log(data);
+  
+      // // Atualizar o localStorage com os dados modificados
+      // localStorage.setItem("gameInfo", JSON.stringify(gameInfo));
+  };
+  
     const handleResultsStop=(data)=>{
         console.log(data.result)
         console.log(data)
@@ -84,7 +91,7 @@ const WebSocket2 = () => {
     socket.on('receive_stop', handleReceiveStop);
     socket.on('return_stop',handleResultsStop);
     socket.on('validate_responses',handleValidate);
-    socket.on('retrieve_validate_responses',handleValidatedResultsStop);
+    // socket.on('retrieve_validate_responses',handleValidatedResultsStop);
     // Limpeza dos eventos ao desmontar
     return () => {
       socket.off('connect', handleConnect);
@@ -95,7 +102,7 @@ const WebSocket2 = () => {
       socket.off('receive_stop', handleReceiveStop);
       socket.off('return_stop',handleResultsStop);
       socket.off('validate_responses',handleValidate);
-      socket.off('retrieve_validate_responses',handleValidatedResultsStop);
+      // socket.off('retrieve_validate_responses',handleValidatedResultsStop);
     };
   }, []);
 
@@ -130,7 +137,7 @@ const WebSocket2 = () => {
       try {
         const response = await new Promise((resolve, reject) => {
           socket.emit(event, data, (res) => {
-          // navigate('/results');
+            setTimeout(() => navigate('/results'), 2300); // Abre ValidationModal após um atraso pequeno  
            
           });
         });
