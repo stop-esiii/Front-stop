@@ -143,7 +143,7 @@ const GameScreen = () => {
       if(JSON.parse(localStorage.getItem('userInfo')).host===true){
         validateStop('validate_responses', {
           code_lobby: JSON.parse(localStorage.getItem('userInfo'))?.roomCode,
-          letra: gameInfo.letters[round > gameInfo.rounds?round - 2:round-1].toUpperCase(),
+          letra: round > gameInfo.rounds?gameInfo.letters[round - 2].toUpperCase():gameInfo.letters[round - 1].toUpperCase(),
         });
       }
      
