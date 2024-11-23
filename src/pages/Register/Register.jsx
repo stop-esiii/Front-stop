@@ -5,11 +5,9 @@ import { registerRequest } from '../../services/Requests';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { TextField, Button, Box, IconButton, Divider } from '@mui/material';
 import ErrorModal from '../../shared/components/ErrorModal/ErrorModal.jsx';
-
-
+import './Register.css'; // Importar o CSS
 
 export default function Register() {
-
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
@@ -17,7 +15,6 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
 
   const regirterNewPlayer = async () => {
     try {
@@ -27,7 +24,7 @@ export default function Register() {
         image: "",
         id_type_role: 1,
         password: password
-      }
+      };
 
       const response = await registerRequest(newPlayer);
 
@@ -42,9 +39,7 @@ export default function Register() {
       setModalOpen(true);
       setErrorMessage(error.request.response);
     }
-
-
-  }
+  };
 
   return (
     <Box
@@ -108,6 +103,15 @@ export default function Register() {
           margin="dense"
           onChange={(e) => setUserName(e.target.value)}
           sx={{ marginBottom: 2 }}
+          slotProps={{
+            input: {
+              style: { color: 'white' },
+              className: 'white-placeholder',
+            },
+          }}
+          InputLabelProps={{
+            style: { color: 'white' },
+          }}
         />
         <TextField
           label="E-mail"
@@ -117,6 +121,15 @@ export default function Register() {
           onChange={(e) => setEmail(e.target.value)}
           margin="dense"
           sx={{ marginBottom: 2 }}
+          slotProps={{
+            input: {
+              style: { color: 'white' },
+              className: 'white-placeholder',
+            },
+          }}
+          InputLabelProps={{
+            style: { color: 'white' },
+          }}
         />
         <TextField
           label="Senha"
@@ -127,16 +140,34 @@ export default function Register() {
           onChange={(e) => setPassword(e.target.value)}
           margin="dense"
           sx={{ marginBottom: 2 }}
+          slotProps={{
+            input: {
+              style: { color: 'white' },
+              className: 'white-placeholder',
+            },
+          }}
+          InputLabelProps={{
+            style: { color: 'white' },
+          }}
         />
         <TextField
           label="Confirmar Senha"
           type="password"
-          placeholder="Insira sua senha novament  e."
+          placeholder="Insira sua senha novamente."
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           fullWidth
           margin="dense"
           sx={{ marginBottom: 2 }}
+          slotProps={{
+            input: {
+              style: { color: 'white' },
+              className: 'white-placeholder',
+            },
+          }}
+          InputLabelProps={{
+            style: { color: 'white' },
+          }}
         />
 
         {/* Botão Cadastrar */}

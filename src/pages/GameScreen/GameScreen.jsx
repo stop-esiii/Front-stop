@@ -6,8 +6,10 @@ import WebSocket2 from '../../services/WebSocket';
 import StopModal from '../StopModal/stop';
 import ValidationModal from '../ValidateModal/validate';
 import { useWebSocket } from '../../services/WebSocketContext';
+import BackgroundAudio from '../../shared/components/Audio/BackgroundAudio';
 
 const GameScreen = () => {
+  const gameAudioPath = '../src/assets/tempo-rodada.mp3' 
   const { roomCode, handleReceiveStop, handleTriggerStop, handleReturnStop, validateStop, socket } = useWebSocket()
   const location = useLocation();
   const { time } = location.state || { time: 0 };  // Definindo um valor padrão de 0 para o tempo
@@ -103,7 +105,7 @@ const GameScreen = () => {
   const handleStopListener = async () => {
     const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
     const isPlayerOne = userInfo.host === true; // Identificar jogador 1 ou 2
-    const delay = isPlayerOne ? 0 : 500; // Jogador 1 envia imediatamente, jogador 2 após 1 segundo
+    const delay = isPlayerOne ? 0 : 100; // Jogador 1 envia imediatamente, jogador 2 após 1 segundo
     
     // Capturar temas apenas para este jogador
     const currentPlayerThemes = { ...selectedThemesRef.current };
@@ -126,7 +128,6 @@ const GameScreen = () => {
       // Incrementar rodada e resetar o cronômetro
       setTimeLeft(time);
       setIsStopOpen(true);
-      setIsDrawLetterOpen(true);
     
       // Limpar campos de entrada
       setSelectedThemes({});
@@ -157,13 +158,18 @@ const GameScreen = () => {
      
       setIsValidatedOpen(true)
 
+
     }, 300); // Abre ValidationModal após um pequeno delay
     setTimeout(() => {
       setIsValidatedOpen(false); // Fecha o ValidationModal
+      setIsDrawLetterOpen(true);
+
+      console.log(round)
+      console.log(gameInfo.rounds)
     
       // TODO: VERIFICAR EMIT DO RETURN STOP
-      if (round > gameInfo.rounds) {
-        useWebSocket.handleReturnStop('return_stop', {
+      if (round >= gameInfo.rounds) {
+        handleReturnStop('return_stop', {
           code_lobby: JSON.parse(localStorage.getItem('userInfo'))?.roomCode,
         });
       }
@@ -267,7 +273,7 @@ const GameScreen = () => {
       >
         STOP
       </Button>
-      <audio src="~/assets/tempo-rodada.mp3" autoPlay loop muted={!isPlaying} />
+      <BackgroundAudio audioSrc= {gameAudioPath}/>
     </Box>
   );
 };
