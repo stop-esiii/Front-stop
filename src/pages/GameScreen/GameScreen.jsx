@@ -6,8 +6,10 @@ import WebSocket2 from '../../services/WebSocket';
 import StopModal from '../StopModal/stop';
 import ValidationModal from '../ValidateModal/validate';
 import { useWebSocket } from '../../services/WebSocketContext';
+import BackgroundAudio from '../../shared/components/Audio/BackgroundAudio';
 
 const GameScreen = () => {
+  const gameAudioPath = '../src/assets/tempo-rodada.mp3' 
   const { roomCode, handleReceiveStop, handleTriggerStop, handleReturnStop, validateStop, socket } = useWebSocket()
   const location = useLocation();
   const { time } = location.state || { time: 0 };  // Definindo um valor padrão de 0 para o tempo
@@ -267,7 +269,7 @@ const GameScreen = () => {
       >
         STOP
       </Button>
-      <audio src="~/assets/tempo-rodada.mp3" autoPlay loop muted={!isPlaying} />
+      <BackgroundAudio audioSrc= {gameAudioPath}/>
     </Box>
   );
 };

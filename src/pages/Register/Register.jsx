@@ -43,7 +43,6 @@ export default function Register() {
       setErrorMessage(error.request.response);
     }
 
-
   }
 
   return (
