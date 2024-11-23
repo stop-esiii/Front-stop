@@ -60,6 +60,14 @@ const WebSocket2 = () => {
       localStorage.setItem('gameInfo', JSON.stringify(gameInfo));
     };
 
+    const handleResultsStop=(data)=>{
+      console.log(data.result)
+      console.log(data)
+      let gameInfo = JSON.parse(localStorage.getItem("gameInfo")) || {};
+      gameInfo.results = data.result;
+      localStorage.setItem("gameInfo", JSON.stringify(gameInfo));
+  }
+
     const handleValidate = (data) => {
       console.log('Validação recebida:');
       // Lógica de validação adicional aqui
@@ -73,6 +81,7 @@ const WebSocket2 = () => {
       socket.on('create_lobby', handleCreateLobby);
       socket.on('enter_lobby', handleEnterLobby);
       socket.on('validate_responses', handleValidate);
+      socket.on('return_stop',handleResultsStop)
     }
 
     // Cleanup ao desmontar
@@ -84,6 +93,7 @@ const WebSocket2 = () => {
         socket.off('create_lobby', handleCreateLobby);
         socket.off('enter_lobby', handleEnterLobby);
         socket.off('validate_responses', handleValidate);
+        socket.off('return_stop',handleResultsStop)
       }
     };
   }, []);

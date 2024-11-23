@@ -105,7 +105,7 @@ const GameScreen = () => {
   const handleStopListener = async () => {
     const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
     const isPlayerOne = userInfo.host === true; // Identificar jogador 1 ou 2
-    const delay = isPlayerOne ? 0 : 500; // Jogador 1 envia imediatamente, jogador 2 após 1 segundo
+    const delay = isPlayerOne ? 0 : 100; // Jogador 1 envia imediatamente, jogador 2 após 1 segundo
     
     // Capturar temas apenas para este jogador
     const currentPlayerThemes = { ...selectedThemesRef.current };
@@ -128,7 +128,6 @@ const GameScreen = () => {
       // Incrementar rodada e resetar o cronômetro
       setTimeLeft(time);
       setIsStopOpen(true);
-      setIsDrawLetterOpen(true);
     
       // Limpar campos de entrada
       setSelectedThemes({});
@@ -159,13 +158,18 @@ const GameScreen = () => {
      
       setIsValidatedOpen(true)
 
+
     }, 300); // Abre ValidationModal após um pequeno delay
     setTimeout(() => {
       setIsValidatedOpen(false); // Fecha o ValidationModal
+      setIsDrawLetterOpen(true);
+
+      console.log(round)
+      console.log(gameInfo.rounds)
     
       // TODO: VERIFICAR EMIT DO RETURN STOP
-      if (round > gameInfo.rounds) {
-        useWebSocket.handleReturnStop('return_stop', {
+      if (round >= gameInfo.rounds) {
+        handleReturnStop('return_stop', {
           code_lobby: JSON.parse(localStorage.getItem('userInfo'))?.roomCode,
         });
       }
