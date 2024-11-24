@@ -15,6 +15,9 @@ import UseAnimationToggle from './animations/animation.jsx';
 import LoadingScreen from './pages/LoadingScreen/loading_screen.jsx';
 import PodiumScreen from './pages/PodiumScreen/PodiumScreen.jsx';
 import { WebSocketProvider } from './services/WebSocketContext.js';
+import BackgroundAudio from './shared/components/Audio/BackgroundAudio';
+import aguardandoJogador from './assets/aguardar-jogadores.wav';
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -41,6 +44,17 @@ function App() {
 function MainContent() {
   const location = useLocation();
 
+  const routesWithAudio = [
+    '/',
+    '/login',
+    '/register',
+    '/profile',
+    '/game-options',
+    '/loading',
+  ];
+
+  const shouldPlayAudio = routesWithAudio.includes(location.pathname);
+
   // Define a rota em que você não quer mostrar a animação
   const hideAnimationOnRoutes = ['/special'];
 
@@ -66,6 +80,7 @@ function MainContent() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
 
+        {shouldPlayAudio && <BackgroundAudio audioSrc={aguardandoJogador} onAudioEnd={true} />}
 
       </div>
     </WebSocketProvider>
